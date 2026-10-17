@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продать — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/modal.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body>
+
+<header>
+    <div class="container header-inner">
+        <a href="/" class="logo"><i class="fas fa-gamepad"></i><span>Games Shop</span></a>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="gameSearch" placeholder="Поиск игр и приложений">
+        </div>
+        <nav class="nav-actions">
+            <span id="authSlot"></span>
+            <a href="/" class="btn btn-outline"><i class="fas fa-arrow-left"></i> <span>Назад</span></a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="container" id="sellContainer" style="padding-top:20px;padding-bottom:30px;">
+        <h1 style="font-size:24px;margin-bottom:20px;">Выберите раздел товаров</h1>
+
+        <div class="sell-tabs" id="sellTabs">
+            <button class="sell-tab active" data-type="all"><i class="fas fa-th"></i> Все</button>
+            <button class="sell-tab" data-type="mobile"><i class="fas fa-mobile-alt"></i> Мобильные игры</button>
+            <button class="sell-tab" data-type="desktop"><i class="fas fa-desktop"></i> Компьютерные игры</button>
+        </div>
+
+        <div class="games-grid" id="gamesGrid">
+            <div style="color:var(--text-dim);text-align:center;padding:40px 0;grid-column:1/-1;">
+                <i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container footer-bottom">
+        <div>© 2025 Games Shop</div>
+    </div>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script type="module" src="/src/js/sell.js"></script>
+<!-- Модалка продажи -->
+<div class="modal-overlay" id="sellModal"></div>
+
+</body>
+</html>

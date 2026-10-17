@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Shop — игровые товары и услуги</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/modal.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body>
+
+<header>
+    <div class="container header-inner">
+        <a href="/" class="logo"><i class="fas fa-gamepad"></i><span>Games Shop</span></a>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Поиск игр, аккаунтов, валюты...">
+        </div>
+        <nav class="nav-actions">
+            <span id="authSlot"></span>
+            <button class="btn btn-outline" id="cartBtn">
+                <i class="fas fa-shopping-cart"></i> <span>Корзина</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+            <button class="btn btn-primary" id="sellBtn">
+                <i class="fas fa-plus-circle"></i> <span>Продать</span>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <section class="hero">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <h1>Игровые товары <br>безопасно и быстро</h1>
+                    <p>Покупай и продавай игровые аккаунты, валюту, предметы и услуги. Деньги в блокировке 7 дней до подтверждения.</p>
+                    <div class="hero-stats">
+                        <div class="stat-item"><h3>50K+</h3><p>Активных лотов</p></div>
+                        <div class="stat-item"><h3>4.9 ★</h3><p>Рейтинг продавцов</p></div>
+                        <div class="stat-item"><h3>24/7</h3><p>Поддержка</p></div>
+                    </div>
+                </div>
+                <div class="hero-banner"><i class="fas fa-dragon"></i></div>
+            </div>
+        </section>
+<!-- 🎮 БАННЕР -->
+<section class="main-banner">
+    <div class="banner-bg"></div>
+    <div class="banner-content">
+        <div class="banner-tag">🔥 Игра дня</div>
+        <h2 class="banner-title">PUBG Mobile</h2>
+        <p class="banner-subtitle">Аккаунты, UC, бусты — всё для победы</p>
+        <button class="btn btn-primary" id="bannerBtn">
+            <i class="fas fa-fire"></i> Смотреть товары
+        </button>
+    </div>
+    <div class="banner-icon">
+        <i class="fas fa-parachute-box"></i>
+    </div>
+</section>
+
+<!-- 🕹️ ИКОНКИ ИГР -->
+<div class="games-strip" id="gamesStrip"></div>
+
+<!-- 👀 ВЫ СМОТРЕЛИ -->
+<section class="viewed-section" id="viewedSection" style="display:none;">
+    <div class="viewed-header">
+        <h3>👀 Вы смотрели</h3>
+        <button class="viewed-clear" id="viewedClear">Очистить</button>
+    </div>
+    <div class="viewed-strip" id="viewedStrip"></div>
+</section>
+
+        <div class="section-title">
+            <h2>Популярные категории</h2>
+        </div>
+        <div class="category-grid" id="categoryGrid">
+            <div class="category-card active" data-category="all"><i class="fas fa-th"></i> Все</div>
+            <div class="category-card" data-category="accounts"><i class="fas fa-gamepad"></i> Аккаунты</div>
+            <div class="category-card" data-category="currency"><i class="fas fa-coins"></i> Игровая валюта</div>
+            <div class="category-card" data-category="items"><i class="fas fa-gem"></i> Предметы</div>
+            <div class="category-card" data-category="boosts"><i class="fas fa-shield-alt"></i> Бусты</div>
+            <div class="category-card" data-category="keys"><i class="fas fa-code"></i> Ключи</div>
+            <div class="category-card" data-category="services"><i class="fas fa-user-plus"></i> Услуги</div>
+        </div>
+
+        <div class="section-title">
+            <h2>🔥 Горячие предложения</h2>
+        </div>
+       <!-- 🎛️ ПАНЕЛЬ ФИЛЬТРОВ -->
+<div class="filters-bar" id="filtersBar">
+    <button class="filter-btn" id="filterSortBtn">
+        <i class="fas fa-sort"></i> <span id="sortLabel">По умолчанию</span>
+    </button>
+    <button class="filter-btn" id="filterPriceBtn">
+        <i class="fas fa-ruble-sign"></i> Цена
+    </button>
+    <button class="filter-btn" id="filterPremiumBtn">
+        <i class="fas fa-rocket"></i> Топ
+    </button>
+<button class="filter-btn filter-reset" id="filterResetBtn">
+        <i class="fas fa-times"></i> Сброс
+    </button>
+</div>
+
+<div class="filter-price-panel" id="filterPricePanel" style="display:none;">
+    <input type="number" id="priceMin" placeholder="От, ₽" min="0">
+    <span style="color:var(--text-dim);">—</span>
+    <input type="number" id="priceMax" placeholder="До, ₽" min="0">
+    <button class="btn btn-primary btn-sm" id="priceApply">Применить</button>
+</div>
+
+        <div class="product-grid" id="productGrid"></div>
+        <div class="pagination" id="pagination"></div>
+
+        <div class="section-title">
+            <h2>⭐ Лучшие продавцы</h2>
+        </div>
+        <div class="sellers-row" id="sellersRow"></div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col"><h4>Games Shop</h4><a href="#">О компании</a><a href="#">Вакансии</a><a href="#">Блог</a></div>
+            <div class="footer-col"><h4>Покупателям</h4><a href="#">Как купить</a><a href="#">Гарантии</a><a href="#">Способы оплаты</a></div>
+            <div class="footer-col"><h4>Продавцам</h4><a href="#">Как продавать</a><a href="#">Правила</a><a href="#">Комиссия</a></div>
+            <div class="footer-col"><h4>Поддержка</h4><a href="#">Помощь</a><a href="#">Безопасность</a><a href="#">Связаться</a></div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2025 Games Shop. Все права защищены.</div>
+            <div class="socials">
+                <i class="fab fa-telegram"></i><i class="fab fa-vk"></i><i class="fab fa-discord"></i><i class="fab fa-youtube"></i>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="productModal">
+    <div class="modal">
+        <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="cartModal">
+    <div class="modal modal-cart">
+        <button class="modal-close" id="cartModalClose"><i class="fas fa-times"></i></button>
+        <h2 class="modal-title"><i class="fas fa-shopping-cart"></i> Корзина</h2>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total">Итого: <span id="cartTotal">0 ₽</span></div>
+            <button class="btn btn-primary" id="checkoutBtn"><i class="fas fa-credit-card"></i> Оформить заказ</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

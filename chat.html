@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/modal.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body class="chat-page-body">
+
+<header class="chat-header" id="chatHeader">
+    <a href="/chats.html" class="chat-back">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    <div class="chat-header-info" id="chatHeaderInfo">
+        <div class="chat-header-avatar">?</div>
+        <div class="chat-header-text">
+            <div class="chat-header-name">Загрузка...</div>
+            <div class="chat-header-status">Без отзыва</div>
+        </div>
+    </div>
+    <div class="chat-header-product" id="chatHeaderProduct"></div>
+</header>
+
+<main class="chat-main">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-order-card" id="chatOrderCard" style="display:none;"></div>
+</main>
+
+<div class="chat-input-bar" id="chatInputBar">
+    <form class="chat-input-form" id="chatForm">
+        <textarea id="chatInput" placeholder="Введите сообщение" rows="1"></textarea>
+        <button type="submit" class="chat-send-btn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </form>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script type="module" src="/src/js/chat-window.js"></script>
+</body>
+</html>

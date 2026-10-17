@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Товар — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/modal.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body>
+
+<header>
+    <div class="container header-inner">
+        <a href="/" class="logo"><i class="fas fa-gamepad"></i><span>Games Shop</span></a>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Поиск игр, аккаунтов, валюты...">
+        </div>
+        <nav class="nav-actions">
+            <span id="authSlot"></span>
+            <a href="/" class="btn btn-outline"><i class="fas fa-arrow-left"></i> <span>Назад</span></a>
+        </nav>
+    </div>
+</header>
+
+<main id="productMain">
+    <div class="container" style="padding-top:20px;padding-bottom:30px;">
+        <div style="text-align:center;padding:60px 0;color:var(--text-dim);">
+            <i class="fas fa-spinner fa-spin" style="font-size:32px;"></i>
+            <div style="margin-top:12px;">Загрузка товара...</div>
+        </div>
+    </div>
+</main>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script type="module" src="/src/js/product.js"></script>
+</body>
+</html>

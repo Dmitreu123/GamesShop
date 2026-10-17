@@ -1,0 +1,268 @@
+/* ==========================================================
+   АДАПТАЦИЯ
+   — Телефон: узкий, нижняя навигация
+   — Планшет/ноут: широкий макет, НО нижняя навигация тоже есть
+   ========================================================== */
+
+/* ==========================================================
+   НИЖНЯЯ НАВИГАЦИЯ — работает на ВСЕХ экранах
+   ========================================================== */
+.bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(17, 22, 31, 0.98);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    z-index: 900;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-item {
+    flex: 1;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 4px;
+    transition: 0.15s;
+    position: relative;
+    height: 100%;
+}
+
+.bottom-nav-item i { font-size: 20px; }
+.bottom-nav-item span { font-size: 11px; line-height: 1; }
+.bottom-nav-item.active { color: var(--primary); }
+.bottom-nav-item:active { transform: scale(0.95); }
+
+.nav-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--bg-2);
+    line-height: 1;
+}
+
+/* Отступ снизу под навигацию */
+body.has-bottom-nav {
+    padding-bottom: 80px;
+}
+
+/* Скрываем корзину из шапки — есть в каталоге */
+.nav-actions #cartBtn { display: none; }
+
+/* На странице входа навигацию прячем */
+body.no-bottom-nav .bottom-nav {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   ТЕЛЕФОНЫ И ПЛАНШЕТЫ (≤ 768px) — компактная версия
+   ========================================================== */
+@media (max-width: 768px) {
+    .header-inner { flex-wrap: wrap; padding: 12px 0; }
+    .logo { font-size: 22px; }
+    .logo i { font-size: 24px; }
+    .search-bar { order: 3; flex-basis: 100%; max-width: 100%; }
+    .nav-actions { gap: 8px; }
+    .nav-actions a span { display: none; }
+    .btn { padding: 8px 16px; font-size: 14px; }
+
+    .hero { padding: 20px 0 10px; }
+    .hero-text h1 { font-size: 28px; }
+    .hero-text p { font-size: 15px; }
+    .hero-stats { gap: 18px; }
+    .stat-item h3 { font-size: 20px; }
+    .stat-item p { font-size: 13px; }
+    .hero-banner { min-height: 140px; }
+    .hero-banner i { font-size: 80px; }
+
+    .section-title h2 { font-size: 20px; }
+    .section-title a { font-size: 14px; }
+
+    .category-card { padding: 8px 14px; font-size: 13px; }
+    .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .product-card { padding: 12px; border-radius: 16px; }
+    .product-icon { width: 48px; height: 48px; font-size: 28px; border-radius: 12px; margin-bottom: 10px; }
+    .product-title { font-size: 14px; }
+    .product-desc { font-size: 12px; }
+    .price-value { font-size: 16px; }
+    .price-old { font-size: 12px; }
+    .buy-btn { width: 34px; height: 34px; font-size: 13px; }
+    .seller-card { padding: 12px; flex-basis: 100%; }
+    .seller-avatar { width: 42px; height: 42px; font-size: 18px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 400px) {
+    .bottom-nav { height: 58px; }
+    .bottom-nav-item i { font-size: 18px; }
+    .bottom-nav-item span { font-size: 10px; }
+
+    .product-grid { grid-template-columns: 1fr; }
+    .hero-text h1 { font-size: 24px; }
+    .nav-actions a span { display: none; }
+    .nav-actions a { padding: 8px; font-size: 18px; }
+}
+
+
+/* ==========================================================
+   ПЛАНШЕТ / НОУТ / ПК (≥ 769px) — ШИРОКИЙ макет
+   + нижняя навигация внизу
+   ========================================================== */
+@media (min-width: 769px) {
+    /* ===== Каталог — больше колонок ===== */
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    /* ===== Сетка игр (sell.html) ===== */
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+    }
+
+    /* ===== Категории внутри игры — 2 колонки ===== */
+    .categories-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    /* ===== Продавцы — 4 в ряд ===== */
+    .sellers-row {
+        gap: 20px;
+    }
+    .seller-card {
+        flex: 1 1 calc(25% - 15px);
+        min-width: 220px;
+    }
+
+    /* ===== Footer — 4 колонки ===== */
+    .footer-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+    }
+    .footer-bottom {
+        flex-direction: row;
+    }
+
+    /* ===== Нижняя навигация — крупнее на ПК ===== */
+    .bottom-nav {
+        height: 68px;
+        border-top: 1px solid var(--border);
+    }
+    .bottom-nav-item {
+        max-width: 220px;
+        gap: 4px;
+    }
+    .bottom-nav-item i { font-size: 22px; }
+    .bottom-nav-item span { font-size: 12px; }
+
+    /* ===== Отступ под навигацию ===== */
+    body.has-bottom-nav {
+        padding-bottom: 84px;
+    }
+
+    /* ===== Прогресс-бар в модалке — крупнее ===== */
+    .sell-progress-dot {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    .sell-progress-label { font-size: 12px; }
+
+    /* ===== Фото в модалке — 5 в ряд ===== */
+    .sell-photos-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    /* ===== Модалки — по центру ===== */
+    .modal-overlay {
+        padding: 40px 20px;
+    }
+    .modal,
+    #sellModal .sell-modal-content {
+        max-width: 620px;
+        width: 100%;
+        margin: 0 auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* ===== Кнопки формы — крупнее ===== */
+    .sell-step-footer .btn {
+        padding: 12px 24px;
+        font-size: 15px;
+    }
+}
+
+
+/* ==========================================================
+   ОЧЕНЬ ШИРОКИЕ (≥ 1400px) — контейнер чуть шире
+   ========================================================== */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1360px;
+    }
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    }
+}
+
+
+/* ==========================================================
+   СРЕДНИЕ ЭКРАНЫ (769-1024px) — планшет
+   ========================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    .categories-list {
+        grid-template-columns: 1fr;
+    }
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .seller-card {
+        flex: 1 1 calc(50% - 10px);
+    }
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сделка — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/modal.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body>
+
+<header class="deal-header">
+    <a href="javascript:history.back()" class="deal-back">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    <div class="deal-header-title" id="dealHeaderTitle">Завершённая продажа</div>
+    <div style="width:36px;"></div>
+</header>
+
+<main id="dealMain">
+    <div class="container" style="padding-top:20px;padding-bottom:30px;">
+        <div style="text-align:center;padding:60px 0;color:var(--text-dim);">
+            <i class="fas fa-spinner fa-spin" style="font-size:32px;"></i>
+            <div style="margin-top:12px;">Загрузка сделки...</div>
+        </div>
+    </div>
+</main>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script type="module" src="/src/js/deal.js"></script>
+</body>
+</html>

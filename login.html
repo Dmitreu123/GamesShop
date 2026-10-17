@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+    <style>
+        .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 24px; padding: 32px; width: 100%; max-width: 420px; }
+        .auth-card h1 { font-size: 26px; margin-bottom: 6px; background: linear-gradient(135deg, #3b82f6, #a855f7); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .auth-card p { color: var(--text-dim); margin-bottom: 24px; font-size: 14px; }
+        .auth-tabs { display: flex; background: #0e141d; border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+        .auth-tab { flex: 1; padding: 10px; text-align: center; border-radius: 9px; cursor: pointer; font-weight: 600; color: var(--text-dim); transition: 0.2s; font-size: 14px; }
+        .auth-tab.active { background: var(--primary); color: white; }
+        .auth-form { display: none; }
+        .auth-form.active { display: block; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-dim); }
+        .form-group input { width: 100%; padding: 12px 16px; background: #0e141d; border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; outline: none; }
+        .form-group input:focus { border-color: var(--primary); }
+        .auth-submit { width: 100%; padding: 13px; background: linear-gradient(135deg, #3b82f6, #7c3aed); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; }
+        .auth-error { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); color: #fecaca; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 14px; display: none; }
+        .auth-error.show { display: block; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--text-dim); text-decoration: none; font-size: 14px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> На главную</a>
+            <h1>Games Shop</h1>
+            <p>Войдите или создайте аккаунт</p>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Вход</div>
+                <div class="auth-tab" data-tab="register">Регистрация</div>
+            </div>
+
+            <div class="auth-error" id="authError"></div>
+
+            <form class="auth-form active" id="loginForm">
+                <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="demo@games.shop" required></div>
+                <div class="form-group"><label>Пароль</label><input type="password" name="password" placeholder="demo123" required></div>
+                <button type="submit" class="auth-submit">Войти</button>
+            </form>
+
+            <form class="auth-form" id="registerForm">
+                <div class="form-group"><label>Никнейм</label><input type="text" name="username" placeholder="Ваш ник" required minlength="3"></div>
+                <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="you@example.com" required></div>
+                <div class="form-group"><label>Пароль (мин. 6)</label><input type="password" name="password" placeholder="••••••" required minlength="6"></div>
+                <button type="submit" class="auth-submit">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { register, login, isLoggedIn } from '/src/js/auth.js';
+if (isLoggedIn()) {
+    const user = JSON.parse(localStorage.getItem('games_shop_user') || '{}');
+    if (user && user.username) {
+        location.href = `/profile.html?u=${user.username}`;
+    } else {
+        localStorage.clear();
+    }
+}
+
+        const tabs = document.querySelectorAll('.auth-tab');
+        const forms = { login: document.getElementById('loginForm'), register: document.getElementById('registerForm') };
+        const err = document.getElementById('authError');
+
+        tabs.forEach(t => t.addEventListener('click', () => {
+            tabs.forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            forms[t.dataset.tab].classList.add('active');
+            err.classList.remove('show');
+        }));
+
+        function showError(m) { err.textContent = m; err.classList.add('show'); }
+
+        forms.login.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+try { await login(fd.get('email'), fd.get('password')); const u = JSON.parse(localStorage.getItem('games_shop_user') || '{}'); location.href = u.username ? `/profile.html?u=${u.username}` : '/profile.html'; }
+            catch (er) { showError(er.message); }
+        });
+        forms.register.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+try { await register(fd.get('username'), fd.get('email'), fd.get('password')); const u = JSON.parse(localStorage.getItem('games_shop_user') || '{}'); location.href = u.username ? `/profile.html?u=${u.username}` : '/profile.html'; }
+            catch (er) { showError(er.message); }
+        });
+    </script>
+</body>
+</html>

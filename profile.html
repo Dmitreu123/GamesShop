@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/modal.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body>
+
+<!-- ☰ МЕНЮ -->
+<div class="profile-menu-overlay" id="profileMenu">
+    <div class="profile-menu-panel">
+        <div class="profile-menu-header">
+            <h2>Меню</h2>
+            <button class="profile-menu-close" id="profileMenuClose"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="profile-menu-avatar-block">
+            <div class="profile-menu-avatar" id="menuAvatar">?</div>
+            <button class="profile-menu-change-avatar" id="menuChangeAvatar">Изменить фото</button>
+            <input type="file" id="menuAvatarInput" accept="image/*" style="display:none;">
+        </div>
+
+        <div class="profile-menu-item profile-menu-email">
+            <div class="profile-menu-icon" style="background:#fff;">
+                <i class="fas fa-at" style="color:#3b82f6;"></i>
+            </div>
+            <div class="profile-menu-info">
+                <div class="profile-menu-label">Адрес электронной почты</div>
+                <div class="profile-menu-value" id="menuEmail">—</div>
+            </div>
+        </div>
+
+        <div class="profile-menu-item">
+            <div class="profile-menu-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="profile-menu-info">
+                <div class="profile-menu-title">Уведомления</div>
+                <div class="profile-menu-subtitle">Новые сообщения</div>
+            </div>
+            <button class="profile-menu-toggle active" id="menuNotifToggle">Вкл.</button>
+        </div>
+
+        <div class="profile-menu-item">
+            <div class="profile-menu-icon" style="background:rgba(245,158,11,0.15);color:#f59e0b;">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="profile-menu-info">
+                <div class="profile-menu-title">Защита средств</div>
+                <div class="profile-menu-subtitle">Подтверждение действий</div>
+            </div>
+            <button class="profile-menu-toggle" id="menuProtectionToggle">Выкл.</button>
+        </div>
+
+        <a href="/chats.html" class="profile-menu-link">
+            <i class="fas fa-comments" style="color:#3b82f6;"></i> Написать в поддержку
+        </a>
+
+        <button class="profile-menu-logout" id="menuLogout">
+            <i class="fas fa-sign-out-alt"></i> Выйти из профиля
+        </button>
+    </div>
+</div>
+
+<header class="profile-topbar">
+    <button class="profile-menu-btn" id="profileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="profile-topbar-title">Профиль</div>
+</header>
+
+<main id="profileMain">
+    <div class="container" style="padding-top:20px;padding-bottom:30px;">
+        <div style="text-align:center;padding:60px 0;color:var(--text-dim);">
+            <i class="fas fa-spinner fa-spin" style="font-size:32px;"></i>
+            <div style="margin-top:12px;">Загрузка профиля...</div>
+        </div>
+    </div>
+</main>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script type="module" src="/src/js/profile.js"></script>
+</body>
+</html>
