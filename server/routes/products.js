@@ -9,7 +9,7 @@ import { authRequired, authOptional } from '../auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
-const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, '..', '..', 'uploads');
 
 fs.mkdirSync(uploadsDir, { recursive: true });
 
