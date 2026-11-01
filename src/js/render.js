@@ -62,7 +62,9 @@ export function createProductCard(product) {
 }
 
 export function renderProducts(products, container) {
+    if (!container) return; // <-- ДОБАВЬ ЭТУ СТРОЧКУ
     container.innerHTML = '';
+    // ... остальной код
     if (products.length === 0) {
         container.innerHTML = `<p style="color:#8a99b0;grid-column:1/-1;text-align:center;padding:40px 0;"><i class="fas fa-search" style="font-size:32px;display:block;margin-bottom:12px;opacity:0.5;"></i>Ничего не найдено</p>`;
         return;
@@ -71,7 +73,9 @@ export function renderProducts(products, container) {
 }
 
 export function renderSellers(sellers, container) {
+    if (!container) return; // <-- ДОБАВЬ ЭТУ СТРОЧКУ
     container.innerHTML = '';
+    // ... остальной код
     sellers.forEach(s => {
         const card = document.createElement('div');
         card.className = 'seller-card';

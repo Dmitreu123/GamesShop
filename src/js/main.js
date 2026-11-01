@@ -79,10 +79,11 @@ async function loadData() {
         renderSellers(sellers, document.getElementById('sellersRow'));
         renderGamesStrip(games);
         applyFilter();
-    } catch (err) {
-        console.error(err);
-        showToast('Ошибка загрузки данных', 'error');
-    }
+} catch (err) {
+    alert('❌ ОШИБКА ЗАГРУЗКИ: ' + err.message); // <-- Покажет ошибку!
+    console.error(err);
+    showToast('Ошибка загрузки данных', 'error');
+}
 }
 
 /* ---------- Иконки игр (горизонтальный скролл) ---------- */
@@ -460,7 +461,7 @@ function initBannerButton() {
 
 
 function initSellButton() {
-    document.getElementById('sellBtn').addEventListener('click', () => {
+    document.getElementById('sellBtn')?.addEventListener('click', () => {
         if (isLoggedIn()) location.href = '/sell.html';
         else location.href = '/login.html';
     });

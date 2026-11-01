@@ -249,6 +249,12 @@ function step4() {
             Эти данные покупатель увидит только после оплаты сделки.
         </p>
 
+${!isAccount ? `
+    <label class="sell-label" style="color: #ff9800;">Ключи / Коды для автовыдачи</label>
+    <p style="font-size: 12px; color: #888; margin-bottom: 5px;">Вставьте ключи (каждый с новой строки). Покупатель получит один ключ после покупки.</p>
+    <textarea id="sfKeys" class="sell-input" rows="4" placeholder="Ключ 1&#10;Ключ 2&#10;Ключ 3">${state.keys || ''}</textarea>
+` : ''}
+
         ${isAccount ? `
             <label class="sell-label">Логин</label>
             <input type="text" id="sfLogin" class="sell-input" value="${state.login || ''}" placeholder="Логин от аккаунта">
@@ -434,21 +440,32 @@ function prevStep() {
 /* ---------- Публикация ---------- */
 
 async function publish() {
-  if (!state.login.trim() || !state.password.trim()) {
-    return showToast('Заполните логин и пароль', 'error');
-  }
+const isAccount = state.category === 1 || state.category === 'accounts' || (state.categoryTitle && state.categoryTitle.toLowerCase().includes('аккаунт'));
+
+if (isAccount) {
+    if (!state.login.trim() || !state.password.trim()) {
+        return showToast('Заполните логин и пароль', 'error');
+    }
+}
 
   const fd = new FormData();
   fd.append('title', state.title);
   fd.append('description', state.description);
   fd.append('price', state.price);
   fd.append('game', state.game);
-  fd.append('category', state.category);
+let catText = 'accounts'; // по умолчанию
+if (state.categoryTitle) {
+    const t = state.categoryTitle.toLowerCase();
+    if (t.includes('аккаунт')) catText = 'accounts';
+    else if (t.includes('uc') || t.includes('валют') || t.includes('монет')) catText = 'items';
+    else catText = 'services'; // услуги, бусты и т.д.
+}
+fd.append('category', catText);
   fd.append('transfer_type', state.transferType);
   fd.append('login', state.login);
   fd.append('password', state.password);
-  fd.append('account_id', state.accountId);
-  fd.append('comment', state.comment);
+  fd.append('account_id', state.accountId);  
+fd.append('comment', state.comment);
   fd.append('is_premium', state.wantPremium ? 'true' : 'false');
   fd.append('auto_boost', state.wantAutoBoost ? 'true' : 'false');
 
