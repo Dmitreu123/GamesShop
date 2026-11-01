@@ -47,7 +47,7 @@ app.use('/api/support', supportRouter);
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date() }));
 
 const distPath   = path.join(__dirname, '..', 'dist');
-const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, '..', 'uploads');
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, '../uploads');
 app.use('/uploads', express.static(uploadsDir));
 app.use(express.static(distPath));
 
