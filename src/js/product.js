@@ -329,6 +329,25 @@ ${isOwner ? `
     bindEvents();
 }
 
+// --- Открытие картинки на весь экран ---
+const galleryMain = document.getElementById('galleryMain');
+if (galleryMain) {
+    galleryMain.style.cursor = 'pointer';
+    galleryMain.addEventListener('click', () => {
+        const img = galleryMain.querySelector('img');
+        if (!img) return;
+        
+        // Создаем темный фон
+        const overlay = document.createElement('div');
+        overlay.className = 'fullscreen-image-overlay';
+        overlay.innerHTML = `<img src="${img.src}" alt="fullscreen">`;
+        
+        // Закрываем при клике на фон
+        overlay.addEventListener('click', () => overlay.remove());
+        
+        document.body.appendChild(overlay);
+    });
+}
 /* ---------- Звёзды ---------- */
 
 function renderStars(rating) {
@@ -413,7 +432,7 @@ if (isOwner) {
     });
 
     document.getElementById('editBtn')?.addEventListener('click', () => {
-        location.href = `/dashboard.html?sell=${product.game}&edit=${product.id}`;
+location.href = `/sell.html?edit=${product.id}`;
     });
 
     document.getElementById('removeBtn')?.addEventListener('click', async () => {
@@ -457,3 +476,49 @@ if (isOwner) {
 /* ---------- Инициализация ---------- */
 
 document.addEventListener('DOMContentLoaded', loadProduct);
+
+
+// === Универсальный полноэкранный просмотр ===
+document.addEventListener('click', (e) => {
+    // Ищем, был ли клик по картинке внутри галереи
+    const img = e.target.closest('#galleryMain img');
+    if (!img) return;
+
+    // Создаем фон
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.9);z-index:99999;display:flex;justify-content:center;align-items:center;cursor:zoom-out;padding:20px;box-sizing:border-box;';
+    
+    // Создаем большое фото
+    const fullImg = document.createElement('img');
+    fullImg.src = img.src;
+    fullImg.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;';
+    
+    overlay.appendChild(fullImg);
+    
+    // Закрываем по клику на фон
+    overlay.onclick = () => overlay.remove();
+    
+    document.body.appendChild(overlay);
+});
+
+// === ПЕРЕХВАТ КНОПКИ РЕДАКТИРОВАНИЯ ===
+setTimeout(() => {
+    const editBtn = document.getElementById('editBtn');
+    if (editBtn) {
+        // Клонируем кнопку, чтобы сбросить старые обработчики (если они были)
+        const newBtn = editBtn.cloneNode(true);
+        editBtn.parentNode.replaceChild(newBtn, editBtn);
+        
+        // Вешаем новый клик
+        newBtn.addEventListener('click', () => {
+            // Берем ID товара из ссылки (например, product.html?id=5)
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            if (id) {
+                window.location.href = `/edit.html?id=${id}`;
+            } else {
+                alert('Ошибка: ID товара не найден');
+            }
+        });
+    }
+}, 500);

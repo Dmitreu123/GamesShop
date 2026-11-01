@@ -8,6 +8,7 @@ import './db.js';
 import { initDb } from './db-pg.js';
 import { startEscrowWorker, startAutoBoostWorker } from './escrow.js';
 
+import adminRouter from './routes/admin.js';
 import usersRouter    from './routes/users.js';
 import walletRouter   from './routes/wallet.js';
 import dealsRouter    from './routes/deals.js';
@@ -19,6 +20,7 @@ import ordersRouter   from './routes/orders.js';
 import messagesRouter from './routes/messages.js';
 import chatsRouter from './routes/chats.js';
 import { setupSocket } from './socket.js';
+import supportRouter from './routes/support.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -39,6 +41,8 @@ app.use('/api/sellers',  sellersRouter);
 app.use('/api/orders',   ordersRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/chats', chatsRouter);
+app.use('/api/admin', adminRouter);
+app.use('/api/support', supportRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date() }));
 

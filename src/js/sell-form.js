@@ -5,6 +5,10 @@
 import { getToken, getUser } from './auth.js';
 import { escapeHTML, showToast } from './utils.js';
 
+// Если редактируем, меняем текст кнопки (если она есть в HTML)
+document.addEventListener('DOMContentLoaded', () => {
+});
+
 const COMMISSION_RATE = 0.15;   // 15%
 const MIN_PRICE = 50;
 const PREMIUM_PRICE = 19;       // разово
@@ -33,36 +37,37 @@ let gamesList = [];
 /* ---------- Открытие модалки ---------- */
 
 export async function openSellModal({ gameId, categoryId } = {}) {
-  if (gamesList.length === 0) {
-    try {
-      const res = await fetch('/api/games');
-      gamesList = await res.json();
-    } catch {
-      showToast('Не удалось загрузить игры', 'error');
-      return;
+    if (gamesList.length === 0) {
+        try {
+            const res = await fetch('/api/games');
+            gamesList = await res.json();
+        } catch {
+            showToast('Не удалось загрузить игры', 'error');
+            return;
+        }
     }
-  }
 
-  state = {
-    step: 1,
-    game: gameId || null,
-    category: categoryId || null,
-    title: '',
-    description: '',
-    transferType: 'full',
-    images: [],
-    price: 0,
-    login: '',
-    password: '',
-    accountId: '',
-    comment: '',
-    wantPremium: true,
-    wantAutoBoost: false
-  };
+    state = {
+        step: 1,
+        game: gameId || null,
+        category: categoryId || null,
+categoryTitle: arguments[0]?.categoryTitle || '', // <-- ДОБАВЬ ЭТУ СТРОЧКУ
+        title: '',
+        description: '',
+        transferType: 'full',
+        images: [],
+        price: 0,
+        login: '',
+        password: '',
+        accountId: '',
+        comment: '',
+        wantPremium: true,
+        wantAutoBoost: false
+    };
 
-  render();
-  document.getElementById('sellModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+    render();
+    document.getElementById('sellModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
 
 export function closeSellModal() {
@@ -234,32 +239,41 @@ function step3() {
 /* ---------- Шаг 4: Данные ---------- */
 
 function step4() {
-  return `
-    <h2 class="sell-step-title">Данные товара</h2>
-    <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">
-      Эти данные покупатель увидит только после оплаты сделки.
-    </p>
+    // Проверяем, является ли категория "Аккаунты" (по ID или названию)
+    // Если в базе ID=1 это Аккаунты, а название содержит "Аккаунт"
+    const isAccount = state.category === 1 || state.category === 'accounts' || (state.categoryTitle && state.categoryTitle.toLowerCase().includes('аккаунт'));
 
-    <label class="sell-label">Логин</label>
-    <input type="text" id="sfLogin" class="sell-input" value="${escapeHTML(state.login)}" placeholder="Логин от аккаунта">
+    return `
+        <h2 class="sell-step-title">Данные товара</h2>
+        <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">
+            Эти данные покупатель увидит только после оплаты сделки.
+        </p>
 
-    <label class="sell-label" style="margin-top:14px;">Пароль</label>
-    <div style="position:relative;">
-      <input type="password" id="sfPassword" class="sell-input" value="${escapeHTML(state.password)}" placeholder="Пароль" style="padding-right:46px;">
-      <button type="button" id="sfTogglePass" style="position:absolute;top:50%;right:14px;transform:translateY(-50%);background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:16px;"><i class="fas fa-eye"></i></button>
-    </div>
+        ${isAccount ? `
+            <label class="sell-label">Логин</label>
+            <input type="text" id="sfLogin" class="sell-input" value="${state.login || ''}" placeholder="Логин от аккаунта">
 
-    <label class="sell-label" style="margin-top:14px;">ID аккаунта</label>
-    <input type="text" id="sfAccountId" class="sell-input" value="${escapeHTML(state.accountId)}" placeholder="ID или ник">
+            <label class="sell-label" style="margin-top:14px;">Пароль</label>
+            <div style="position:relative;">
+                <input type="password" id="sfPassword" class="sell-input" value="${state.password || ''}" placeholder="Пароль">
+                <button type="button" id="sfTogglePass" style="position:absolute; right:10px; top:10px; background:none; border:none; color:#888;"><i class="fas fa-eye"></i></button>
+            </div>
+        ` : ''}
 
-    <label class="sell-label" style="margin-top:14px;">Комментарий</label>
-    <textarea id="sfComment" class="sell-input" rows="3" placeholder="Любая доп. информация для покупателя" maxlength="1000">${escapeHTML(state.comment)}</textarea>
+        <label class="sell-label" style="margin-top:14px;">
+            ${isAccount ? 'ID аккаунта / Ник' : 'ID игрока / Ник для зачисления'}
+        </label>
+        <input type="text" id="sfAccountId" class="sell-input" value="${state.accountId || ''}" placeholder="${isAccount ? 'ID или ник' : 'Введите ваш ID или ник в игре'}">
 
-    <div class="sell-warning">
-      🔒 <b>Данные защищены</b>. Покупатель получит их только после оплаты и до подтверждения заказа.
-    </div>
-  `;
+        <label class="sell-label" style="margin-top:14px;">Комментарий</label>
+        <textarea id="sfComment" class="sell-input" rows="3" placeholder="Любая доп. информация для покупателя">${state.comment || ''}</textarea>
+
+        <div class="sell-warning">
+            🔒 <b>Данные защищены</b>. Покупатель получит их только после оплаты.
+        </div>
+    `;
 }
+
 
 /* ---------- Шаг 5: Премиум ---------- */
 
@@ -446,6 +460,7 @@ async function publish() {
       headers: { Authorization: `Bearer ${getToken()}` },
       body: fd
     });
+    
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Ошибка публикации');
 
@@ -453,6 +468,47 @@ async function publish() {
     closeSellModal();
     setTimeout(() => location.reload(), 800);
   } catch (err) {
+    alert('ОШИБКА: ' + err.message); // <-- ВЫВЕДЕТ ОШИБКУ НА ЭКРАН
     showToast(err.message, 'error');
   }
 }
+
+	
+async function loadEditData() {
+    if (!isEditMode) return;
+    try {
+        const res = await fetch(`/api/products/${editId}`);
+        if (!res.ok) throw new Error('Ошибка загрузки');
+        const data = await res.json();
+        
+        // Записываем в state
+        state.title = data.title || '';
+        state.description = data.description || '';
+        state.price = data.price || '';
+        state.game = data.game || '';
+        state.category = data.category || '';
+        state.transferType = data.transfer_type || 'full';
+        state.login = data.login || '';
+        state.password = data.password || ''; 
+        state.accountId = data.account_id || '';
+        state.comment = data.comment || '';
+        
+        // Перерисовываем форму
+        if (typeof render === 'function') render();
+
+        // ПРИНУДИТЕЛЬНО заполняем инпуты (если они есть на странице)
+        setTimeout(() => {
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                const name = input.name || input.id;
+                if (state[name] !== undefined) {
+                    input.value = state[name];
+                }
+            });
+        }, 100);
+
+    } catch (e) {
+        console.error('Ошибка загрузки:', e);
+    }
+}
+

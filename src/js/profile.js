@@ -1,3 +1,6 @@
+// ====================================================
+
+
 /* ==========================================================
    Публичный профиль /profile.html?u=username
    ========================================================== */
@@ -41,6 +44,11 @@ const res = await fetch(`/api/users/${username}/profile`, {
 
         const me = getUser();
         isOwner = me && me.id === profileUser.id;
+
+// Сохраняем роль для админки
+if (isOwner) {
+    localStorage.setItem('games_shop_role', profileUser.role || 'user');
+}
 
         renderProfile();
         loadTabContent();
@@ -87,22 +95,35 @@ function renderProfile() {
                 </a>
             ` : ''}
 
-            <div class="profile-header-card">
-                <div class="profile-avatar">
-                    ${avatarHTML}
-                </div>
-                <div class="profile-info">
-                    <h1 class="profile-username">${escapeHTML(profileUser.username)}</h1>
-                    <div class="profile-rating">
-                        <span class="stars">${'★'.repeat(roundedRating)}${'☆'.repeat(5 - roundedRating)}</span>
-                        <b>${(profileUser.rating || 0).toFixed(1)}</b>
-                        <span class="reviews-count">${profileUser.reviews_count || 0} отзывов</span>
-                    </div>
-                    <div class="profile-member-since">
-                        На Games Shop с ${memberSince}
-                    </div>
-                </div>
-            </div>
+
+<div class="profile-header-card" style="position: relative;">
+    
+${(isOwner && (profileUser.role === 'admin' || profileUser.role === 'moderator' || profileUser.email === 'admin@games.shop')) ? `
+<a href="/admin.html" style="position:absolute; right:10px; top:10px; background:linear-gradient(135deg, #ff2e63, #ff6b3d); color:white; padding:4px 8px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold; display:flex; align-items:center; gap:4px; z-index:10; box-shadow:0 2px 6px rgba(255,46,99,0.3);">
+    <i class="fas fa-shield-alt" style="font-size: 10px;"></i> Админка
+</a>
+
+    ` : ''}
+
+    <div class="profile-avatar">
+        ${avatarHTML}
+    </div>
+    <div class="profile-info">
+<h1 class="profile-username">
+    ${escapeHTML(profileUser.username)}
+    ${profileUser.role === 'moderator' ? '<span style="font-size:12px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">Модератор</span>' : ''}
+    ${profileUser.role === 'admin' ? '<span style="font-size:12px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">Админ</span>' : ''}
+</h1>
+        <div class="profile-rating">
+<span class="profile-stars" style="color: #ffc107;">${'★'.repeat(roundedRating)}${'☆'.repeat(5 - roundedRating)}</span>
+            <b>${(profileUser.rating || 0).toFixed(1)}</b>
+<a href="/reviews.html?user=${profileUser.username}" class="profile-reviews-count" style="color: var(--primary); text-decoration: none; font-weight: 600;">${profileUser.reviews_count || 0} отзывов</a>
+        </div>
+        <div class="profile-member-since">
+            На Games Shop с ${memberSince}
+        </div>
+    </div>
+</div>
 
             <div class="profile-tabs-main">
                 <button class="profile-tab-main ${currentTab === 'products' ? 'active' : ''}" data-main-tab="products">
@@ -130,6 +151,7 @@ function renderProfile() {
 
     bindEvents();
 }
+
 
 /* ---------- Подтабы ---------- */
 
@@ -431,4 +453,26 @@ function closeMenu() {
     document.body.style.overflow = '';
 }
 
-document.addEventListener('DOMContentLoaded', loadProfile);
+// Инициализация кнопки уведомлений в меню
+function initNotificationsToggle() {
+    const notifToggle = document.getElementById('menuNotificationsToggle');
+    if (notifToggle) {
+        const isEnabled = localStorage.getItem('notifications_enabled') !== 'false';
+        notifToggle.textContent = isEnabled ? 'Вкл.' : 'Выкл.';
+        notifToggle.style.background = isEnabled ? 'var(--primary)' : '#333';
+
+        notifToggle.onclick = () => {
+            const current = localStorage.getItem('notifications_enabled') !== 'false';
+            localStorage.setItem('notifications_enabled', !current);
+            notifToggle.textContent = !current ? 'Вкл.' : 'Выкл.';
+            notifToggle.style.background = !current ? 'var(--primary)' : '#333';
+            showToast(!current ? 'Уведомления включены' : 'Уведомления отключены', 'success');
+        };
+    }
+}
+
+// Запуск при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    loadProfile();
+    initNotificationsToggle();
+});

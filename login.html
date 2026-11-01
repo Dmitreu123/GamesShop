@@ -42,8 +42,8 @@
             <div class="auth-error" id="authError"></div>
 
             <form class="auth-form active" id="loginForm">
-                <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="demo@games.shop" required></div>
-                <div class="form-group"><label>Пароль</label><input type="password" name="password" placeholder="demo123" required></div>
+<div class="form-group"><label>Email</label><input type="email" name="email" placeholder="you@example.com" required></div>
+<div class="form-group"><label>Пароль</label><input type="password" name="password" placeholder="Введите пароль" required></div>
                 <button type="submit" class="auth-submit">Войти</button>
             </form>
 
@@ -53,46 +53,98 @@
                 <div class="form-group"><label>Пароль (мин. 6)</label><input type="password" name="password" placeholder="••••••" required minlength="6"></div>
                 <button type="submit" class="auth-submit">Зарегистрироваться</button>
             </form>
+<!-- Форма ввода кода -->
+<form class="auth-form" id="verifyForm" style="display: none;">
+    <p style="color: #888; font-size: 14px; margin-bottom: 15px; text-align: center;">
+        Мы отправили 6-значный код на вашу почту.<br>Проверьте папку «Спам», если письма нет.
+    </p>
+    <div class="form-group">
+        <label>Код из письма</label>
+        <input type="text" name="code" placeholder="123456" maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 5px;" required>
+    </div>
+<button type="submit" class="auth-submit">Подтвердить</button>
+    <button type="button" id="backToRegister" style="background: none; border: none; color: #888; margin-top: 15px; cursor: pointer; width: 100%;">← Назад</button>
+</form>
         </div>
     </div>
+<script type="module">
+    import { register, login, isLoggedIn, verifyEmail, getUser } from '/src/js/auth.js';
 
-    <script type="module">
-        import { register, login, isLoggedIn } from '/src/js/auth.js';
-if (isLoggedIn()) {
-    const user = JSON.parse(localStorage.getItem('games_shop_user') || '{}');
-    if (user && user.username) {
-        location.href = `/profile.html?u=${user.username}`;
-    } else {
-        localStorage.clear();
+    if (isLoggedIn()) {
+        const user = getUser();
+        if (user && user.username) {
+            location.href = `/profile.html?u=${user.username}`;
+        } else {
+            localStorage.clear();
+        }
     }
+
+    const tabs = document.querySelectorAll('.auth-tab');
+    const forms = {
+        login: document.getElementById('loginForm'),
+        register: document.getElementById('registerForm')
+    };
+    const verifyForm = document.getElementById('verifyForm');
+    const err = document.getElementById('authError');
+
+    tabs.forEach(t => t.addEventListener('click', () => {
+        tabs.forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+        forms[t.dataset.tab].classList.add('active');
+        if (err) err.classList.remove('show');
+    }));
+
+    function showError(m) {
+        if (err) {
+            err.textContent = m;
+            err.classList.add('show');
+        } else {
+            alert(m);
+        }
+    }
+
+    // Обработчик ВХОДА
+    forms.login.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            await login(e.target.email.value, e.target.password.value);
+            location.reload();
+        } catch (err) {
+            showError(err.message);
+        }
+    });
+
+// Обработчик РЕГИСТРАЦИИ
+forms.register.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+        await register(e.target.username.value, e.target.email.value, e.target.password.value);
+    } catch (err) {
+        showError(err.message);
+    }
+});
+
+// Обработчик ВВОДА КОДА (добавь этот блок)
+if (verifyForm) {
+    verifyForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = verifyForm.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Проверка...';
+        
+        try {
+            await verifyEmail(e.target.code.value.trim());
+            location.reload();
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Подтвердить';
+        }
+    });
 }
+</script>
 
-        const tabs = document.querySelectorAll('.auth-tab');
-        const forms = { login: document.getElementById('loginForm'), register: document.getElementById('registerForm') };
-        const err = document.getElementById('authError');
-
-        tabs.forEach(t => t.addEventListener('click', () => {
-            tabs.forEach(x => x.classList.remove('active'));
-            t.classList.add('active');
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            forms[t.dataset.tab].classList.add('active');
-            err.classList.remove('show');
-        }));
-
-        function showError(m) { err.textContent = m; err.classList.add('show'); }
-
-        forms.login.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-try { await login(fd.get('email'), fd.get('password')); const u = JSON.parse(localStorage.getItem('games_shop_user') || '{}'); location.href = u.username ? `/profile.html?u=${u.username}` : '/profile.html'; }
-            catch (er) { showError(er.message); }
-        });
-        forms.register.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-try { await register(fd.get('username'), fd.get('email'), fd.get('password')); const u = JSON.parse(localStorage.getItem('games_shop_user') || '{}'); location.href = u.username ? `/profile.html?u=${u.username}` : '/profile.html'; }
-            catch (er) { showError(er.message); }
-        });
-    </script>
 </body>
 </html>

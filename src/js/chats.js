@@ -1,5 +1,5 @@
 /* ==========================================================
-   Страница чатов — список диалогов
+   Страница чатов — список диалогов (Playerok Style)
    ========================================================== */
 
 import './auth.js';
@@ -55,33 +55,35 @@ function renderChats(chats) {
     }
 
     container.innerHTML = chats.map(c => {
-        const avatarHTML = c.partner_avatar
-            ? `<img src="${c.partner_avatar}" alt="">`
-            : escapeHTML(c.partner_name[0].toUpperCase());
-
-        const lastMsg = c.last_message
-            ? (c.last_message_mine ? 'Вы: ' : '') + escapeHTML(c.last_message)
+        // Бэкенд теперь отдает unread_count
+        const isUnread = c.unread_count > 0; 
+        const time = formatTime(c.last_message_at);
+        
+        // Берем последнее сообщение. Если его нет - заглушка
+        const lastMsg = c.last_message 
+            ? escapeHTML(c.last_message) 
             : 'Начните диалог';
 
-        const time = formatTime(c.last_message_at);
-        const unreadBadge = c.unread > 0 ? `<span class="chat-unread">${c.unread}</span>` : '';
+        // Аватарка
+        const avatarHTML = c.partner_avatar
+            ? `<img src="${c.partner_avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+            : `<div style="width:100%;height:100%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:20px;border-radius:50%;">${escapeHTML((c.partner_name || '?')[0].toUpperCase())}</div>`;
 
-        const statusClass = c.deal_status === 'completed' ? 'status-completed' : 'status-active';
-
+        // Если есть непрочитанные, чат подсвечивается, текст белый и жирный
         return `
-            <a href="/chat.html?deal=${c.deal_id}" class="chat-item">
-                <div class="chat-avatar">
+            <a href="/chat.html?deal=${c.id}" class="chat-item" style="display:flex;align-items:center;padding:15px;border-bottom:1px solid #2a2a2a;text-decoration:none;${isUnread ? 'background:rgba(33,150,243,0.08);' : ''}">
+                <div style="width:50px;height:50px;margin-right:15px;position:relative;flex-shrink:0;">
                     ${avatarHTML}
-                    ${c.unread > 0 ? '<div class="chat-avatar-dot"></div>' : ''}
+                    ${isUnread ? `<div style="position:absolute;bottom:0;right:0;width:14px;height:14px;background:#2196f3;border-radius:50%;border:2px solid #121212;"></div>` : ''}
                 </div>
-                <div class="chat-info">
-                    <div class="chat-top">
-                        <div class="chat-name">${escapeHTML(c.partner_name)}</div>
-                        <div class="chat-time">${time}</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                        <div style="color:${isUnread ? '#fff' : '#e0e0e0'};font-weight:${isUnread ? 'bold' : '500'};font-size:16px;">${escapeHTML(c.partner_name || 'Пользователь')}</div>
+                        <div style="color:${isUnread ? '#2196f3' : '#888'};font-size:12px;font-weight:${isUnread ? 'bold' : 'normal'};">${time}</div>
                     </div>
-                    <div class="chat-bottom">
-                        <div class="chat-last">${lastMsg}</div>
-                        ${unreadBadge}
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div style="color:${isUnread ? '#fff' : '#888'};font-weight:${isUnread ? '600' : 'normal'};font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${lastMsg}</div>
+                        ${isUnread ? `<div style="background:#2196f3;color:#fff;font-size:11px;font-weight:bold;padding:2px 7px;border-radius:10px;margin-left:8px;">${c.unread_count}</div>` : ''}
                     </div>
                 </div>
             </a>

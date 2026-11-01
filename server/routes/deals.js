@@ -56,9 +56,21 @@ router.get('/:id', authRequired, (req, res) => {
   const deal = dealsRepo.byId(Number(req.params.id));
   if (!deal) return res.status(404).json({ error: 'Сделка не найдена' });
 
-  const isBuyer = deal.buyer_id === req.user.id;
-  const isSeller = deal.seller_id === req.user.id;
-  if (!isBuyer && !isSeller) return res.status(403).json({ error: 'Нет доступа' });
+const isBuyer = deal.buyer_id === req.user.id;
+const isSeller = deal.seller_id === req.user.id;
+const isStaff = req.user.role === 'admin' || req.user.role === 'moderator';
+
+if (!isBuyer && !isSeller && !isStaff) {
+  return res.status(403).json({ error: 'Нет доступа' });
+}
+
+// Если зашел админ или модератор, отправляем системное сообщение (один раз)
+if (isStaff && deal.status === 'disputed') {
+    const sysMsg = db.prepare("SELECT * FROM messages WHERE deal_id = ? AND text = 'Администратор присоединился к чату'").get(deal.id);
+    if (!sysMsg) {
+        db.prepare("INSERT INTO messages (deal_id, sender_id, text) VALUES (?, ?, ?)").run(deal.id, req.user.id, 'Администратор присоединился к чату');
+    }
+}
 
   // Товар
   const product = productsRepo.byId(deal.product_id);
@@ -142,6 +154,21 @@ router.post('/:id/cancel', authRequired, (req, res) => {
   });
 
   res.json({ ok: true });
+});
+
+// --- ОТКРЫТИЕ СПОРА ---
+router.post('/:id/dispute', authRequired, (req, res) => {
+  const dealId = Number(req.params.id);
+  const deal = dealsRepo.byId(dealId);
+
+  if (!deal) return res.status(404).json({ error: 'Сделка не найдена' });
+  if (deal.buyer_id !== req.user.id) return res.status(403).json({ error: 'Только покупатель может открыть спор' });
+  if (deal.status !== 'pending') return res.status(400).json({ error: 'Спор можно открыть только по активной сделке' });
+
+  // Меняем статус на disputed
+  db.prepare("UPDATE deals SET status = 'disputed' WHERE id = ?").run(dealId);
+
+  res.json({ ok: true, message: 'Спор открыт. Ожидайте решения администратора.' });
 });
 
 export default router;

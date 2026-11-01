@@ -212,6 +212,11 @@ function renderDeal() {
 /* ---------- Кнопки действий ---------- */
 
 function renderActions() {
+// Если это админ или модератор — скрываем кнопки действий
+const myRole = localStorage.getItem('games_shop_role');
+if (myRole === 'admin' || myRole === 'moderator') {
+    return `<div style="text-align:center; color:#ff9800; font-weight:bold; padding:10px; background:rgba(255,152,0,0.1); border-radius:8px;">👑 Вы в режиме администратора</div>`;
+}
     if (deal.status === 'completed') {
         // Отзыв
         if (deal.is_buyer && !review) {
@@ -224,18 +229,21 @@ function renderActions() {
         return '';
     }
 
-    if (deal.status === 'pending') {
-        // Покупатель может подтвердить или отменить
-        if (deal.is_buyer) {
-            return `
-                <button class="deal-action-btn primary" id="confirmBtn">
-                    <i class="fas fa-check"></i> Подтвердить получение
-                </button>
-                <button class="deal-action-btn danger" id="cancelBtn">
-                    <i class="fas fa-times"></i> Отменить сделку
-                </button>
-            `;
-        }
+if (deal.status === 'pending') {
+    // Покупатель может подтвердить или отменить
+    if (deal.is_buyer) {
+        return `
+            <button class="deal-action-btn primary" id="confirmBtn">
+                <i class="fas fa-check"></i> Подтвердить получение
+            </button>
+            <button class="deal-action-btn danger" id="cancelBtn">
+                <i class="fas fa-times"></i> Отменить сделку
+            </button>
+            <button class="deal-action-btn" id="disputeBtn" style="border: 1px solid #ff2e63; color: #ff2e63; background: transparent; margin-top: 10px;">
+                <i class="fas fa-exclamation-triangle"></i> Открыть спор
+            </button>
+        `;
+    }
         // Продавец — ждёт или отменяет
         return `
             <div class="deal-hint">
@@ -373,6 +381,25 @@ function bindEvents() {
         }
     });
 
+// --- ОТКРЫТИЕ СПОРА ---
+document.getElementById('disputeBtn')?.addEventListener('click', async () => {
+    if (!confirm('Вы уверены, что хотите открыть спор? Деньги будут заморожены до решения администратора.')) return;
+    
+    try {
+        const res = await fetch(`/api/deals/${deal.id}/dispute`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Ошибка');
+        
+        showToast('Спор открыт! Ожидайте решения админа.', 'success');
+        setTimeout(() => location.reload(), 1500);
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
+});
+
     // Отзыв
     document.getElementById('leaveReviewBtn')?.addEventListener('click', openReviewModal);
 }
@@ -380,3 +407,5 @@ function bindEvents() {
 /* ---------- Старт ---------- */
 
 document.addEventListener('DOMContentLoaded', loadDeal);
+
+

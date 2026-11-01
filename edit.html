@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать товар — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <style>
+        .edit-container { max-width: 600px; margin: 20px auto; padding: 20px; background: var(--bg-2); border-radius: 12px; }
+        .edit-container h1 { margin-bottom: 20px; font-size: 24px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px; background: #0d1b1d; border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 16px; box-sizing: border-box;
+        }
+        .form-group textarea { height: 100px; resize: vertical; }
+        .btn-save { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-inner">
+            <a href="/" class="logo"><i class="fas fa-gamepad"></i> <span>Games Shop</span></a>
+            <nav class="nav-actions">
+                <a href="/profile.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Назад</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="edit-container">
+            <h1>Редактировать товар</h1>
+            <form id="editForm">
+                <div class="form-group">
+                    <label>Название</label>
+                    <input type="text" id="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Цена (₽)</label>
+                    <input type="number" id="price" required>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Логин (если аккаунт)</label>
+                    <input type="text" id="login">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="text" id="password">
+                </div>
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="comment"></textarea>
+                </div>
+                <button type="submit" class="btn-save">Сохранить изменения</button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="/src/js/edit.js"></script>
+</body>
+</html>

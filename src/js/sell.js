@@ -8,6 +8,9 @@ import { isLoggedIn, getToken } from './auth.js';
 import { escapeHTML, showToast } from './utils.js';
 import { openSellModal } from './sell-form.js';
 
+// Делаем функцию глобальной для вызова
+window.openSellModal = openSellModal;
+
 let allGames = [];
 let currentType = 'all';
 let searchQuery = '';
@@ -19,26 +22,15 @@ let categoriesData = null;
 async function loadGames() {
     try {
         const res = await fetch('/api/games');
+        if (!res.ok) throw new Error('Ошибка сервера');
         allGames = await res.json();
         renderGames();
     } catch (err) {
-        document.getElementById('gamesGrid').innerHTML =
-            '<div style="color:var(--danger);text-align:center;padding:40px 0;grid-column:1/-1;">Не удалось загрузить игры</div>';
+        document.getElementById('gamesGrid').innerHTML = `
+            <div style="color:var(--danger);text-align:center;padding:40px;grid-column:1/-1;">Не удалось загрузить игры</div>
+        `;
         showToast('Ошибка загрузки игр', 'error');
-    }
-}
-
-/* ---------- Загрузка категорий для игры ---------- */
-
-async function loadCategories(gameId) {
-    try {
-        const res = await fetch(`/api/games/${gameId}/categories`);
-        if (!res.ok) throw new Error('Игра не найдена');
-        categoriesData = await res.json();
-        renderCategories();
-    } catch (err) {
-        showToast('Не удалось загрузить категории', 'error');
-        showGameSelection();
+        console.error(err);
     }
 }
 
@@ -62,8 +54,8 @@ function renderGames() {
 
     if (games.length === 0) {
         grid.innerHTML = `
-            <div style="color:var(--text-dim);text-align:center;padding:40px 0;grid-column:1/-1;">
-                <i class="fas fa-search" style="font-size:32px;display:block;margin-bottom:12px;opacity:0.5;"></i>
+            <div style="color:var(--text-dim);text-align:center;padding:40px;grid-column:1/-1;">
+                <i class="fas fa-search" style="font-size:32px;display:block;margin-bottom:10px;"></i>
                 Ничего не найдено
             </div>
         `;
@@ -72,13 +64,37 @@ function renderGames() {
 
     grid.innerHTML = games.map(g => `
         <a href="?game=${g.id}" class="game-card" data-game="${g.id}">
-            <div class="game-icon" style="background: ${g.color}20; color: ${g.color};">
-                <i class="${escapeHTML(g.icon)}"></i>
-            </div>
+<div class="game-icon" style="background: ${g.color ? g.color + '20' : 'rgba(255,255,255,0.05)'}; color: ${g.color || 'var(--primary)'}; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+    ${g.icon && g.icon.includes('http') 
+        ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" onerror="this.style.display='none'">` 
+        : `<i class="${escapeHTML(g.icon || 'fas fa-gamepad')}" style="font-size: 32px;"></i>`
+    }
+</div>
             <div class="game-name">${escapeHTML(g.name)}</div>
             ${g.popular ? '<div class="game-popular">🔥 Топ</div>' : ''}
         </a>
     `).join('');
+}
+
+/* ---------- Загрузка категорий (БЕРЕМ ИЗ БАЗЫ) ---------- */
+
+async function loadCategories(gameId) {
+    try {
+        const res = await fetch(`/api/games/${gameId}/categories`);
+        if (!res.ok) throw new Error('Игра не найдена');
+        
+        const data = await res.json();
+        
+        categoriesData = {
+            game: data.game || { id: gameId, name: 'Игра', color: '#2196f3', icon: 'fas fa-gamepad' },
+            categories: data.categories || []
+        };
+        
+        renderCategories();
+    } catch (err) {
+        showToast('Не удалось загрузить категории', 'error');
+        console.error(err);
+    }
 }
 
 /* ---------- Рендер категорий ---------- */
@@ -93,22 +109,25 @@ function renderCategories() {
             </button>
         </div>
 
-        <div class="sell-game-header">
-            <div class="sell-game-icon" style="background: ${game.color}20; color: ${game.color};">
-                <i class="${escapeHTML(game.icon)}"></i>
-            </div>
-            <h1>${escapeHTML(game.name)}</h1>
-        </div>
+<div class="sell-game-header">
+    <div class="sell-game-icon" style="background: ${game.color ? game.color + '20' : 'rgba(255,255,255,0.05)'}; color: ${game.color || 'var(--primary)'}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        ${game.icon && game.icon.includes('http') 
+            ? `<img src="${game.icon}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">` 
+            : `<i class="${escapeHTML(game.icon || 'fas fa-gamepad')}" style="font-size: 32px;"></i>`
+        }
+    </div>
+    <h1>${escapeHTML(game.name)}</h1>
+</div>
 
         <h2 style="font-size:18px;margin-bottom:14px;color:white;">Что вы хотите продать?</h2>
 
         <div class="categories-list" id="categoriesList">
             ${categories.map(c => `
-                <div class="category-row" data-category="${c.id}">
-                    <div class="category-row-icon" style="background: ${c.color}20; color: ${c.color};">
-                        <i class="${escapeHTML(c.icon)}"></i>
+                <div class="category-row" data-category="${c.id}" data-title="${escapeHTML(c.title || c.name || '')}" style="cursor:pointer; margin-bottom: 10px;">
+                    <div class="category-row-icon" style="background: ${c.color ? c.color + '20' : 'rgba(33,150,243,0.2)'}; color: ${c.color || '#2196f3'};">
+                        <i class="${escapeHTML(c.icon || 'fas fa-box')}"></i>
                     </div>
-                    <div class="category-row-name">${escapeHTML(c.name)}</div>
+                    <div class="category-row-name">${escapeHTML(c.title || c.name || 'Категория')}</div>
                     <i class="fas fa-chevron-right category-row-arrow"></i>
                 </div>
             `).join('')}
@@ -123,125 +142,16 @@ function renderCategories() {
     document.getElementById('categoriesList').addEventListener('click', (e) => {
         const row = e.target.closest('[data-category]');
         if (!row) return;
-        openRulesModal(row.dataset.category);
+        
+        window.openSellModal({ 
+            gameId: game.id, 
+            categoryId: row.dataset.category,
+            categoryTitle: row.dataset.title // Передаем название категории!
+        });
     });
 }
 
-/* ---------- Модалка с правилами ---------- */
-
-function openRulesModal(categoryId) {
-    const { game, categories, rules } = categoriesData;
-    const category = categories.find(c => c.id === categoryId);
-    if (!category) return;
-
-    // Проверяем, не соглашался ли пользователь уже
-    const agreedKey = `rules_agreed_${game.id}_${categoryId}`;
-    if (localStorage.getItem(agreedKey) === '1') {
-        // Сразу идём на dashboard с параметрами
-        goToDashboard(game.id, categoryId);
-        return;
-    }
-
-    // Создаём модалку
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay open';
-    modal.id = 'rulesModal';
-    modal.innerHTML = `
-        <div class="modal" style="max-width:520px;">
-            <button class="modal-close" id="rulesModalClose"><i class="fas fa-times"></i></button>
-
-            <div class="rules-header">
-                <h2>Условия категории</h2>
-                <div style="color:var(--text-dim);font-size:13px;margin-top:4px;">
-                    ${escapeHTML(game.name)} • ${escapeHTML(category.name)}
-                </div>
-            </div>
-
-            <div class="rules-block rules-ok">
-                <div class="rules-block-title">
-                    <span class="rules-icon-ok">✓</span> Требования
-                </div>
-                ${(rules.requirements || []).map(r => `
-                    <div class="rules-item">
-                        <span class="rules-dot"></span>
-                        <span>${escapeHTML(r)}</span>
-                        <i class="fas fa-check rules-check"></i>
-                    </div>
-                `).join('')}
-            </div>
-
-            <div class="rules-block rules-no">
-                <div class="rules-block-title">
-                    <span class="rules-icon-no">✕</span> Запрещено
-                </div>
-                ${(rules.forbidden || []).map(r => `
-                    <div class="rules-item">
-                        <span class="rules-dot rules-dot-red"></span>
-                        <span>${escapeHTML(r)}</span>
-                        <i class="fas fa-check rules-check"></i>
-                    </div>
-                `).join('')}
-            </div>
-
-            <label class="rules-agree">
-                <input type="checkbox" id="rulesDontShow">
-                <span>Больше не показывать это предупреждение</span>
-            </label>
-
-            <p style="color:var(--text-dim);font-size:12px;text-align:center;margin-top:12px;">
-                Продолжая, вы принимаете <a href="#" style="color:var(--primary);">условия продажи</a>
-            </p>
-
-            <button class="btn btn-primary" id="rulesAccept" style="width:100%;justify-content:center;margin-top:16px;">
-                Принять
-            </button>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-
-    // Закрытие
-    const close = () => {
-        modal.remove();
-        document.body.style.overflow = '';
-    };
-
-    document.getElementById('rulesModalClose').onclick = close;
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) close();
-    });
-
-    // Принять
-    document.getElementById('rulesAccept').onclick = () => {
-        if (document.getElementById('rulesDontShow').checked) {
-            localStorage.setItem(agreedKey, '1');
-        }
-        close();
-        goToDashboard(game.id, categoryId);
-    };
-}
-
-/* ---------- Переход в кабинет ---------- */
-
-function goToDashboard(gameId, categoryId) {
-    if (!isLoggedIn()) {
-        localStorage.setItem('return_to', `/sell.html?game=${gameId}&category=${categoryId}`);
-        location.href = '/login.html';
-        return;
-    }
-    // Открываем модалку продажи прямо здесь
-    openSellModal({ gameId, categoryId });
-}
-
-/* ---------- Возврат к играм ---------- */
-
-function showGameSelection() {
-    history.pushState({}, '', '/sell.html');
-    location.reload();
-}
-
-/* ---------- События ---------- */
+/* ---------- Инициализация ---------- */
 
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(location.search);
@@ -250,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (gameId) {
         loadCategories(gameId);
     } else {
-        // Табы и поиск
         const tabsEl = document.getElementById('sellTabs');
         const searchEl = document.getElementById('gameSearch');
 

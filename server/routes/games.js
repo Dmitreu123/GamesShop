@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import db from '../db.js';
 
 const router = Router();
 
@@ -6,37 +7,7 @@ const router = Router();
    Список игр для маркетплейса
    type: 'mobile' | 'desktop' — для табов
    popular: true — показывать в топе
-   categories: список того, что можно продавать в игре
    ========================================================== */
-
-
-/* ==========================================================
-   Список игр с категориями и правилами
-   ========================================================== */
-
-const CATEGORY_NAMES = {
-  accounts:  { name: 'Аккаунты',           icon: 'fas fa-user-circle', color: '#3b82f6' },
-  uc:        { name: 'UC (PUBG)',          icon: 'fas fa-coins',       color: '#f59e0b' },
-  gems:      { name: 'Гемы',               icon: 'fas fa-gem',         color: '#84cc16' },
-  diamonds:  { name: 'Алмазы',             icon: 'fas fa-gem',         color: '#06b6d4' },
-  gold:      { name: 'Золото',             icon: 'fas fa-coins',       color: '#eab308' },
-  robux:     { name: 'Robux',              icon: 'fas fa-cube',        color: '#ef4444' },
-  primogems: { name: 'Примогемы',          icon: 'fas fa-star',        color: '#a855f7' },
-  cp:        { name: 'CP (CoD)',           icon: 'fas fa-coins',       color: '#65a30d' },
-  'v-bucks': { name: 'V-Bucks',            icon: 'fas fa-coins',       color: '#7c3aed' },
-  coins:     { name: 'Монеты',             icon: 'fas fa-coins',       color: '#dc2626' },
-  vp:        { name: 'VP (Valorant)',      icon: 'fas fa-coins',       color: '#ef4444' },
-  money:     { name: 'Деньги',             icon: 'fas fa-dollar-sign', color: '#22c55e' },
-  mmr:       { name: 'MMR (Dota)',         icon: 'fas fa-trophy',      color: '#dc2626' },
-  skins:     { name: 'Скины / Предметы',   icon: 'fas fa-gem',         color: '#a855f7' },
-  items:     { name: 'Предметы',           icon: 'fas fa-box',         color: '#8b5cf6' },
-  boosts:    { name: 'Бусты',              icon: 'fas fa-rocket',      color: '#f97316' },
-  keys:      { name: 'Ключи',              icon: 'fas fa-key',         color: '#eab308' },
-  gifts:     { name: 'Подарки',            icon: 'fas fa-gift',        color: '#ec4899' },
-  servers:   { name: 'Сервера',            icon: 'fas fa-server',      color: '#16a34a' },
-  services:  { name: 'Услуги',             icon: 'fas fa-hands-helping', color: '#06b6d4' },
-  other:     { name: 'Другое',             icon: 'fas fa-ellipsis-h',  color: '#6b7280' }
-};
 
 const DEFAULT_RULES = {
   requirements: [
@@ -53,14 +24,14 @@ const DEFAULT_RULES = {
 };
 
 const GAMES = [
+{
+  id: 'pubg', name: 'PUBG Mobile', icon: 'https://cdn.cloudflare.steamstatic.com/steam/apps/578080/header.jpg', color: '#f59e0b',
+  type: 'mobile', popular: true,
+  categories: ['accounts', 'uc', 'boosts', 'skins', 'services'],
+  rules: DEFAULT_RULES
+},
   {
-    id: 'pubg', name: 'PUBG Mobile', icon: 'fas fa-parachute-box', color: '#f59e0b',
-    type: 'mobile', popular: true,
-    categories: ['accounts', 'uc', 'boosts', 'skins', 'services'],
-    rules: DEFAULT_RULES
-  },
-  {
-    id: 'brawl', name: 'Brawl Stars', icon: 'fas fa-star', color: '#84cc16',
+id: 'brawl', name: 'Brawl Stars', icon: 'https://cdn1.epicgames.com/spt-assets/b8c3f9c4e6c24fdd888c1a1e7f6a2d02/brawl-stars-1g7j3.jpg', color: '#84cc16',
     type: 'mobile', popular: true,
     categories: ['accounts', 'gems', 'boosts', 'skins', 'services'],
     rules: {
@@ -76,7 +47,7 @@ const GAMES = [
     }
   },
   {
-    id: 'standoff2', name: 'Standoff 2', icon: 'fas fa-crosshairs', color: '#f97316',
+    id: 'standoff2', name: 'Standoff 2', icon: 'https://play-lh.googleusercontent.com/_qQ4p9C8X1Y3q5Q4p9C8X1Y3q5Q4p9C8X1Y3q5Q=s180', color: '#f97316',
     type: 'mobile', popular: true,
     categories: ['accounts', 'gold', 'skins', 'boosts', 'services'],
     rules: DEFAULT_RULES
@@ -94,7 +65,7 @@ const GAMES = [
     rules: DEFAULT_RULES
   },
   {
-    id: 'roblox', name: 'Roblox', icon: 'fas fa-cube', color: '#ef4444',
+id: 'roblox', name: 'Roblox', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/1200px-Roblox_player_icon_black.svg.png', color: '#ef4444',
     type: 'mobile', popular: true,
     categories: ['accounts', 'robux', 'items', 'services'],
     rules: DEFAULT_RULES
@@ -136,25 +107,16 @@ const GAMES = [
     rules: DEFAULT_RULES
   },
   {
-    id: 'cs2', name: 'CS2', icon: 'fas fa-crosshairs', color: '#f59e0b',
-    type: 'desktop', popular: true,
-    categories: ['accounts', 'skins', 'boosts', 'services'],
-    rules: {
-      requirements: [
-        'Аккаунт с полным доступом к Steam и почте',
-        'На аккаунте нет VAC-бана и трейд-бана',
-        'Указывать Prime-статус и часы в игре'
-      ],
-      forbidden: [
-        'Запрещено продавать аккаунт с активным трейд-холдом',
-        'Запрещено продавать аккаунт без доступа к почте'
-      ]
-    }
+
+id: 'cs2', name: 'Counter-Strike 2', icon: 'https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg', color: '#f59e0b',    type: 'desktop', popular: true,
+type: 'desktop', popular: true,
+    categories: ['accounts', 'skins', 'services'],
+    rules: DEFAULT_RULES
   },
   {
-    id: 'dota2', name: 'Dota 2', icon: 'fas fa-shield-alt', color: '#dc2626',
+id: 'dota2', name: 'Dota 2', icon: 'https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg', color: '#ef4444',
     type: 'desktop', popular: true,
-    categories: ['accounts', 'items', 'mmr', 'boosts', 'services'],
+    categories: ['accounts', 'items', 'services'],
     rules: DEFAULT_RULES
   },
   {
@@ -211,33 +173,34 @@ const GAMES = [
   }
 ];
 
+
 /* GET /api/games — все игры */
 router.get('/', (req, res) => {
   res.json(GAMES);
 });
 
-/* GET /api/games/:id — одна игра */
-router.get('/:id', (req, res) => {
-  const game = GAMES.find(g => g.id === req.params.id);
-  if (!game) return res.status(404).json({ error: 'Игра не найдена' });
-  res.json(game);
-});
 
-/* GET /api/games/:id/categories — категории для игры */
+/* GET /api/games/:id/categories - категории для игры из БД */
 router.get('/:id/categories', (req, res) => {
-  const game = GAMES.find(g => g.id === req.params.id);
-  if (!game) return res.status(404).json({ error: 'Игра не найдена' });
+  try {
+    const gameId = req.params.id; // Берем ID как строку (pubg, cs2 и т.д.)
 
-  const categories = (game.categories || []).map(catId => ({
-    id: catId,
-    ...(CATEGORY_NAMES[catId] || { name: catId, icon: 'fas fa-box', color: '#6b7280' })
-  }));
+    // Ищем игру в твоем жестком массиве GAMES
+    const game = GAMES.find(g => g.id === gameId);
 
-  res.json({
-    game: { id: game.id, name: game.name, icon: game.icon, color: game.color },
-    categories,
-    rules: game.rules || DEFAULT_RULES
-  });
+    // Берем категории из базы данных
+    const categories = db.prepare("SELECT * FROM game_categories WHERE game_id = ?").all(gameId);
+
+    res.json({
+      game: game ? { id: game.id, name: game.name, icon: game.icon, color: game.color } : { id: gameId, name: 'Игра', icon: 'fas fa-gamepad', color: '#2196f3' },
+      categories: categories.length > 0 ? categories : [
+        { id: 'accounts', title: 'Аккаунты', icon: 'fas fa-user', color: '#2196f3' }
+      ],
+      rules: game ? (game.rules || {}) : {}
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

@@ -1,3 +1,7 @@
+/* ==========================================================
+   SQLite база данных — полная версия с is_admin и DB_PATH
+   ========================================================== */
+
 import Database from 'better-sqlite3';
 import bcrypt from 'bcryptjs';
 import path from 'path';
@@ -6,10 +10,14 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
+// Путь к БД (на Railway берется из переменной DB_PATH)
 const dbPath = process.env.DB_PATH || path.join(__dirname, '..', 'games-shop.db');
 const db = new Database(dbPath);
+
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
+
+/* ---------- Схема ---------- */
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
@@ -25,35 +33,43 @@ db.exec(`
     reviews_count INTEGER DEFAULT 0,
     deals_count   INTEGER DEFAULT 0,
     is_verified   INTEGER DEFAULT 0,
-is_admin      INTEGER DEFAULT 0,    
-created_at    TEXT DEFAULT CURRENT_TIMESTAMP
+    is_admin      INTEGER DEFAULT 0,
+    created_at    TEXT DEFAULT CURRENT_TIMESTAMP
   );
 
-CREATE TABLE IF NOT EXISTS products (
-  id               INTEGER PRIMARY KEY AUTOINCREMENT,
-  seller_id        INTEGER NOT NULL,
-  title            TEXT NOT NULL,
-  description      TEXT,
-  price            REAL NOT NULL,
-  old_price      REAL DEFAULT NULL,
-  game             TEXT NOT NULL,
-  category         TEXT NOT NULL,
-subcategory    TEXT DEFAULT '',
-  icon             TEXT DEFAULT 'fas fa-box',
-  transfer_type    TEXT DEFAULT 'full',
-  login            TEXT DEFAULT '',
-  password         TEXT DEFAULT '',
-  account_id       TEXT DEFAULT '',
-  comment          TEXT DEFAULT '',
-  is_premium       INTEGER DEFAULT 0,
-  premium_until    TEXT,
-  auto_boost       INTEGER DEFAULT 0,
-views          INTEGER DEFAULT 0,
-  last_boosted_at  TEXT DEFAULT CURRENT_TIMESTAMP,
-  status           TEXT DEFAULT 'active',
-  created_at       TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (seller_id) REFERENCES users(id)
-);
+  CREATE TABLE IF NOT EXISTS products (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    seller_id      INTEGER NOT NULL,
+    title          TEXT NOT NULL,
+    description    TEXT,
+    price          REAL NOT NULL,
+    old_price      REAL DEFAULT NULL,
+    game           TEXT NOT NULL,
+    category       TEXT NOT NULL,
+    subcategory    TEXT DEFAULT '',
+    icon           TEXT DEFAULT 'fas fa-box',
+    transfer_type  TEXT DEFAULT 'full',
+    login          TEXT DEFAULT '',
+    password       TEXT DEFAULT '',
+    account_id     TEXT DEFAULT '',
+    comment        TEXT DEFAULT '',
+    is_premium     INTEGER DEFAULT 0,
+    premium_until  TEXT,
+    auto_boost     INTEGER DEFAULT 0,
+    last_boosted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    views          INTEGER DEFAULT 0,
+    status         TEXT DEFAULT 'active',
+    created_at     TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (seller_id) REFERENCES users(id)
+  );
+
+  CREATE TABLE IF NOT EXISTS product_images (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id  INTEGER NOT NULL,
+    url         TEXT NOT NULL,
+    created_at  TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+  );
 
   CREATE TABLE IF NOT EXISTS deals (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,42 +102,37 @@ views          INTEGER DEFAULT 0,
     FOREIGN KEY (target_id) REFERENCES users(id)
   );
 
-CREATE TABLE IF NOT EXISTS transactions (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id     INTEGER NOT NULL,
-  type        TEXT NOT NULL,
-  amount      REAL NOT NULL,
-  status      TEXT DEFAULT 'success',
-  method      TEXT DEFAULT '',
-  description TEXT,
-  created_at  TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);
+  CREATE TABLE IF NOT EXISTS messages (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    deal_id     INTEGER NOT NULL,
+    sender_id   INTEGER NOT NULL,
+    text        TEXT NOT NULL,
+    created_at  TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (deal_id)   REFERENCES deals(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES users(id)
+  );
 
-CREATE TABLE IF NOT EXISTS product_images (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  product_id  INTEGER NOT NULL,
-  url         TEXT NOT NULL,
-  created_at  TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
-);
+  CREATE TABLE IF NOT EXISTS transactions (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL,
+    type        TEXT NOT NULL,
+    amount      REAL NOT NULL,
+    status      TEXT DEFAULT 'success',
+    method      TEXT DEFAULT '',
+    description TEXT,
+    created_at  TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
 
   CREATE INDEX IF NOT EXISTS idx_products_seller ON products(seller_id);
   CREATE INDEX IF NOT EXISTS idx_deals_buyer     ON deals(buyer_id);
   CREATE INDEX IF NOT EXISTS idx_deals_seller    ON deals(seller_id);
   CREATE INDEX IF NOT EXISTS idx_reviews_target  ON reviews(target_id);
-  CREATE TABLE IF NOT EXISTS messages (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  deal_id     INTEGER NOT NULL,
-  sender_id   INTEGER NOT NULL,
-  text        TEXT NOT NULL,
-  created_at  TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (deal_id)   REFERENCES deals(id) ON DELETE CASCADE,
-  FOREIGN KEY (sender_id) REFERENCES users(id)
-);
-CREATE INDEX IF NOT EXISTS idx_product_images ON product_images(product_id);
-CREATE INDEX IF NOT EXISTS idx_messages_deal ON messages(deal_id);
+  CREATE INDEX IF NOT EXISTS idx_messages_deal   ON messages(deal_id);
 `);
+
+/* ---------- Сид (Демо и Админ) ---------- */
+
 const seed = db.prepare('SELECT id FROM users WHERE email = ?').get('demo@games.shop');
 if (!seed) {
   const hash = bcrypt.hashSync('demo123', 10);
@@ -130,7 +141,6 @@ if (!seed) {
   console.log('👤 demo@games.shop / demo123 (баланс 5000 ₽)');
 }
 
-
 const adminSeed = db.prepare('SELECT id FROM users WHERE email = ?').get('admin@games.shop');
 if (!adminSeed) {
   const adminHash = bcrypt.hashSync('admin123', 10);
@@ -138,6 +148,8 @@ if (!adminSeed) {
     .run('admin', 'admin@games.shop', adminHash, 0);
   console.log('👑 admin@games.shop / admin123 (админ площадки)');
 }
+
+/* ---------- Репозитории ---------- */
 
 export const usersRepo = {
   create: (username, email, hash) =>
@@ -148,14 +160,17 @@ export const usersRepo = {
 
   findById: (id) =>
     db.prepare(`SELECT id, username, email, avatar, bio, balance, frozen,
-                rating, reviews_count, deals_count, is_verified, created_at
+                rating, reviews_count, deals_count, is_verified, is_admin, created_at
                 FROM users WHERE id = ?`).get(id),
 
-  findByUsername: (username) =>
-    db.prepare('SELECT id, username, avatar, bio, rating, reviews_count, deals_count, created_at FROM users WHERE username = ?')
-      .get(username),
-findAdmin: () =>
-  db.prepare('SELECT id, username, email, balance FROM users WHERE is_admin = 1 LIMIT 1').get(),
+findByUsername: (username) =>
+  db.prepare(`
+    SELECT id, username, email, avatar, bio, balance, frozen, rating, reviews_count, deals_count, is_verified, created_at, role
+    FROM users WHERE username = ?
+  `).get(username),
+
+  findAdmin: () =>
+    db.prepare('SELECT id, username, email, balance FROM users WHERE is_admin = 1 LIMIT 1').get(),
 
   updateAvatar: (id, avatar) =>
     db.prepare('UPDATE users SET avatar = ? WHERE id = ?').run(avatar, id),
@@ -187,18 +202,15 @@ findAdmin: () =>
 };
 
 export const productsRepo = {
-all: () =>
-  db.prepare(`
-    SELECT p.*,
-           u.username AS seller_name,
-           u.rating AS seller_rating,
-           u.reviews_count AS seller_reviews,
-           u.avatar AS seller_avatar
-    FROM products p
-    JOIN users u ON u.id = p.seller_id
-    WHERE p.status = 'active'
-    ORDER BY p.created_at DESC
-  `).all(),
+  all: () =>
+    db.prepare(`
+      SELECT p.*, u.username AS seller_name, u.rating AS seller_rating,
+             u.reviews_count AS seller_reviews, u.avatar AS seller_avatar
+      FROM products p
+      JOIN users u ON u.id = p.seller_id
+      WHERE p.status = 'active'
+      ORDER BY p.created_at DESC
+    `).all(),
 
   bySeller: (seller_id) =>
     db.prepare('SELECT * FROM products WHERE seller_id = ? ORDER BY created_at DESC').all(seller_id),
@@ -207,8 +219,13 @@ all: () =>
 
   create: (data) =>
     db.prepare(`
-      INSERT INTO products (seller_id, title, description, price, game, category, icon)
-      VALUES (@seller_id, @title, @description, @price, @game, @category, @icon)
+      INSERT INTO products
+        (seller_id, title, description, price, game, category, subcategory, icon,
+         transfer_type, login, password, account_id, comment,
+         is_premium, auto_boost)
+      VALUES (@seller_id, @title, @description, @price, @game, @category, @subcategory, @icon,
+              @transfer_type, @login, @password, @account_id, @comment,
+              @is_premium, @auto_boost)
     `).run(data),
 
   remove: (id, seller_id) =>
@@ -218,7 +235,8 @@ all: () =>
 export const dealsRepo = {
   create: (data) =>
     db.prepare(`
-      INSERT INTO deals (buyer_id, seller_id, product_id, product_title, amount, commission, payout, auto_confirm)
+      INSERT INTO deals
+        (buyer_id, seller_id, product_id, product_title, amount, commission, payout, auto_confirm)
       VALUES (@buyer_id, @seller_id, @product_id, @product_title, @amount, @commission, @payout, @auto_confirm)
     `).run(data),
 
@@ -280,3 +298,54 @@ export const txRepo = {
 };
 
 export default db;
+
+// Миграция для уведомлений
+try {
+  const msgCols = db.prepare("PRAGMA table_info(messages)").all().map(c => c.name);
+  if (!msgCols.includes('is_read')) {
+    db.exec("ALTER TABLE messages ADD COLUMN is_read INTEGER DEFAULT 0");
+    console.log('[DB] Добавлена колонка is_read в messages');
+  }
+} catch (e) {
+  console.error('[DB] Ошибка миграции:', e.message);
+}
+
+// Таблицы для техподдержки
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS support_chats (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      status TEXT DEFAULT 'open',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+    CREATE TABLE IF NOT EXISTS support_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      chat_id INTEGER NOT NULL,
+      sender_id INTEGER NOT NULL,
+      text TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (chat_id) REFERENCES support_chats(id),
+      FOREIGN KEY (sender_id) REFERENCES users(id)
+    );
+  `);
+  console.log('[DB] Таблицы поддержки готовы');
+} catch (e) {
+  console.error('[DB] Ошибка создания таблиц поддержки:', e.message);
+}
+
+
+// Миграция для подтверждения почты
+try {
+  const userCols = db.prepare("PRAGMA table_info(users)").all().map(c => c.name);
+  if (!userCols.includes('is_verified_email')) {
+    db.exec("ALTER TABLE users ADD COLUMN is_verified_email INTEGER DEFAULT 0");
+  }
+  if (!userCols.includes('verify_code')) {
+    db.exec("ALTER TABLE users ADD COLUMN verify_code TEXT");
+  }
+  console.log('[DB] Поля для почты готовы');
+} catch (e) {
+  console.error('[DB] Ошибка миграции почты:', e.message);
+}

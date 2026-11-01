@@ -15,21 +15,26 @@ function getMessages(dealId) {
   `).all(dealId);
 }
 
-function checkAccess(deal, userId) {
-  return deal && (deal.buyer_id === userId || deal.seller_id === userId);
+
+function checkAccess(deal, user) {
+  if (!user) return false;
+  const isStaff = user.role === 'admin' || user.role === 'moderator';
+  return isStaff || deal.buyer_id === user.id || deal.seller_id === user.id;
 }
 
 router.get('/:dealId', authRequired, (req, res) => {
   const deal = dealsRepo.byId(Number(req.params.dealId));
-  if (!checkAccess(deal, req.user.id)) {
+if (!checkAccess(deal, req.user)) {
     return res.status(403).json({ error: 'Нет доступа к этой сделке' });
   }
+// Помечаем сообщения собеседника как прочитанные
+db.prepare("UPDATE messages SET is_read = 1 WHERE deal_id = ? AND sender_id != ?").run(deal.id, req.user.id);
   res.json(getMessages(deal.id));
 });
 
 router.post('/:dealId', authRequired, (req, res) => {
   const deal = dealsRepo.byId(Number(req.params.dealId));
-  if (!checkAccess(deal, req.user.id)) {
+if (!checkAccess(deal, req.user)) {
     return res.status(403).json({ error: 'Нет доступа к этой сделке' });
   }
 

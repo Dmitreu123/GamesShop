@@ -266,3 +266,103 @@ body.no-bottom-nav .bottom-nav {
         flex: 1 1 calc(50% - 10px);
     }
 }
+
+
+
+
+/* =========================================
+   PLAYEROK STYLE (ИСПРАВЛЕННЫЙ)
+   ========================================= */
+@media (max-width: 768px) {
+  /* Сетка в 2 колонки */
+  .profile-products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px 12px !important; /* Чуть больше отступа между рядами */
+  }
+
+  /* Карточка */
+  .profile-product-card {
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+
+  /* Контейнер для картинки (важно для значков!) */
+  .profile-product-image {
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    margin-bottom: 8px !important;
+    position: relative !important; /* Чтобы значки были внутри */
+    background: #1a1a1a !important;
+  }
+
+  .profile-product-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  /* --- ВОЗВРАЩАЕМ ПРОСМОТРЫ И ПРЕМИУМ --- */
+  .profile-product-premium {
+    position: absolute !important;
+    top: 6px !important;
+    right: 6px !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    border-radius: 50% !important;
+    width: 26px !important;
+    height: 26px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    z-index: 10 !important;
+  }
+
+  .profile-product-views {
+    position: absolute !important;
+    bottom: 6px !important;
+    left: 6px !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #fff !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    z-index: 10 !important;
+  }
+
+  /* --- НАЗВАНИЕ ТОВАРА (КАК НА PLAYEROK) --- */
+  .profile-product-title {
+    font-size: 14px !important; /* Крупнее */
+    color: #ffffff !important;
+    font-weight: 600 !important; /* Жирнее */
+    line-height: 1.3 !important;
+    margin: 4px 0 6px 0 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important; /* Максимум 2 строки */
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    white-space: normal !important;
+  }
+
+  /* --- ЦЕНА --- */
+  .profile-product-price {
+    font-size: 16px !important;
+    color: #ff2e63 !important; /* Розовый как на Playerok */
+    font-weight: 700 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+}

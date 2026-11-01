@@ -2770,14 +2770,14 @@ textarea.sell-input {
 }
 
 .profile-product-card {
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    text-decoration: none;
-    transition: 0.2s;
-    display: flex;
-    flex-direction: column;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .profile-product-card:hover {
@@ -2791,11 +2791,12 @@ textarea.sell-input {
 }
 
 .profile-product-image {
-    position: relative;
-    width: 100%;
-    padding-bottom: 100%;
-    background: #0e141d;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 12px; /* Добавили скругление */
+  background: #0d1b1d;
+  overflow: hidden;
 }
 
 .profile-product-image img {
@@ -2847,23 +2848,23 @@ textarea.sell-input {
 }
 
 .profile-product-title {
-    padding: 10px 12px 4px;
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.3;
-    height: 40px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  padding: 8px 0 4px 0; /* Убрали боковые отступы */
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  height: 40px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .profile-product-price {
-    padding: 0 12px 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 800;
+  padding: 0 0 8px 0;
+  color: #ff2e63; /* Розовый как на Playerok */
+  font-size: 16px;
+  font-weight: 800;
 }
 
 /* Сделки */
@@ -4993,4 +4994,318 @@ body.chat-page-body {
     font-weight: 800;
     white-space: nowrap;
     flex-shrink: 0;
+}
+
+
+.auth-chip-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1a1a;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.2s;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+.admin-btn:hover {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+}
+
+
+
+
+/* =========================================
+   ФИКС ДЛЯ PLAYEROK STYLE (БЕЗ ЛОМАНИЯ СЕТКИ)
+   ========================================= */
+
+/* Убираем рамки, фон и отступы у карточки */
+.profile-product-card {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Защищаем сетку от вылезания картинок за экран */
+.profile-products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+}
+
+/* Скругляем картинку */
+.profile-product-image {
+    border-radius: 12px !important;
+}
+
+/* Убираем отступы у текста, чтобы он был ровно под картинкой */
+.profile-product-title {
+    padding: 8px 0 4px 0 !important;
+}
+
+/* Делаем цену розовой и убираем отступы */
+.profile-product-price {
+    padding: 0 0 8px 0 !important;
+    color: #ff2e63 !important;
+}
+
+
+/* =========================================
+   ЗНАЧКИ ПРОСМОТРОВ И ПРЕМИУМА (В ПРОФИЛЕ)
+   ========================================= */
+.profile-product-image {
+    position: relative !important; /* Чтобы значки крепились к картинке */
+}
+
+.profile-product-premium {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    border-radius: 50% !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    z-index: 10 !important;
+}
+
+.profile-product-views {
+    position: absolute !important;
+    bottom: 8px !important;
+    left: 8px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    color: #fff !important;
+    padding: 2px 6px !important;
+    border-radius: 8px !important;
+    font-size: 11px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    z-index: 10 !important;
+}
+
+/* =========================================
+   АДАПТИВ ДЛЯ СТРАНИЦЫ ТОВАРА (product.html)
+   ========================================= */
+@media (max-width: 768px) {
+    /* Ограничиваем главную картинку на странице товара */
+    .product-page-main img,
+    .product-image-main img,
+    #productMainImage {
+        max-height: 300px !important;
+        width: 100% !important;
+        object-fit: contain !important; /* Показывает фото целиком */
+        background: #0d1b1d !important;
+        border-radius: 12px !important;
+    }
+
+    /* Уменьшаем заголовок товара */
+    .product-page-title,
+    .product-title h1 {
+        font-size: 20px !important;
+        line-height: 1.3 !important;
+        margin: 10px 0 !important;
+    }
+
+    /* Уменьшаем цену */
+    .product-page-price,
+    .product-price {
+        font-size: 24px !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* Делаем кнопку "Купить" аккуратной */
+    .buy-btn, 
+    .btn-primary {
+        width: 100% !important;
+        padding: 14px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+    }
+}
+
+
+/* =========================================
+   АДАПТИВ ДЛЯ СТРАНИЦЫ ТОВАРА (PRODUCT PAGE)
+   ========================================= */
+@media (max-width: 768px) {
+    /* Делаем главный контейнер колонкой и убираем лишние отступы */
+    .container.product-page {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 10px !important;
+        gap: 15px !important;
+    }
+
+    /* Блок с галереей */
+    .product-gallery-block {
+        width: 100% !important;
+    }
+
+    /* Главная картинка (квадратная или чуть вытянутая) */
+    .gallery-main {
+        width: 100% !important;
+        aspect-ratio: 1 / 1 !important; /* Квадратная */
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        background: #0d1b1d !important;
+        position: relative !important;
+    }
+
+    .gallery-main img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important; /* Заполняет без искажений */
+    }
+
+    /* Миниатюры (делаем прокрутку вбок) */
+    .gallery-thumbs {
+        display: flex !important;
+        overflow-x: auto !important;
+        gap: 8px !important;
+        margin-top: 10px !important;
+        padding-bottom: 5px !important;
+    }
+    
+    .gallery-thumb {
+        flex: 0 0 60px !important;
+        height: 60px !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+    }
+
+    /* Информация о товаре */
+    .product-info-block {
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    /* Заголовок */
+    .product-page-title {
+        font-size: 20px !important;
+        line-height: 1.3 !important;
+        margin: 0 0 10px 0 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Цена (делаем розовой и крупной) */
+    .product-page-price {
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        color: #ff2e63 !important;
+    }
+
+    .product-page-old {
+        font-size: 16px !important;
+        color: #888 !important;
+    }
+
+    .product-page-discount {
+        font-size: 14px !important;
+        padding: 2px 6px !important;
+        border-radius: 6px !important;
+    }
+
+    /* Кнопка Купить */
+    .product-buy-btn {
+        width: 100% !important;
+        padding: 16px !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+        margin-top: 15px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+}
+
+
+/* =========================================
+   ФИКС ЗНАЧКОВ (ПРОСМОТРЫ И ПРЕМИУМ)
+   ========================================= */
+.profile-product-image {
+    position: relative !important;
+}
+
+/* Опускаем картинку на задний план */
+.profile-product-image img {
+    position: relative !important;
+    z-index: 1 !important; 
+}
+
+/* Поднимаем значки на передний план (поверх картинки) */
+.profile-product-premium,
+.profile-product-views {
+    position: absolute !important;
+    z-index: 99 !important; /* Жестко поверх всего */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Позиция ракеты */
+.profile-product-premium {
+    top: 8px !important;
+    right: 8px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    border-radius: 50% !important;
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+}
+
+/* Позиция глаз (просмотров) */
+.profile-product-views {
+    bottom: 8px !important;
+    left: 8px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    color: #fff !important;
+    padding: 2px 6px !important;
+    border-radius: 8px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+}
+
+
+/* =========================================
+   ПОЛНОЭКРАННЫЙ ПРОСМОТР КАРТИНКИ
+   ========================================= */
+.fullscreen-image-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.9) !important;
+    z-index: 99999 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    cursor: zoom-out !important;
+}
+
+.fullscreen-image-overlay img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 8px !important;
 }

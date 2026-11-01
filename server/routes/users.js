@@ -1,3 +1,4 @@
+import { sendVerificationCode } from '../mailer.js';
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import multer from 'multer';
@@ -33,17 +34,54 @@ const upload = multer({
 
 const router = Router();
 
-router.post('/register', (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) return res.status(400).json({ error: 'Заполните все поля' });
-  if (password.length < 6)             return res.status(400).json({ error: 'Пароль минимум 6 символов' });
-  if (usersRepo.findByEmail(email))    return res.status(409).json({ error: 'Email уже занят' });
+router.post('/register', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    console.log('🔥 ПОПЫТКА РЕГИСТРАЦИИ:', { username, email });
 
-  const hash = bcrypt.hashSync(password, 10);
-  const result = usersRepo.create(username, email, hash);
-  const user   = usersRepo.findById(result.lastInsertRowid);
+    const existing = db.prepare("SELECT * FROM users WHERE email = ? OR username = ?").get(email, username);
+    if (existing) {
+      return res.status(400).json({ error: 'Ник или Email уже заняты' });
+    }
 
-  res.status(201).json({ token: signToken(user), user });
+    // Генерируем код
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Хэшируем пароль перед сохранением
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    // Сохраняем пользователя (Одна запись, всё закрыто)
+    db.prepare(`
+      INSERT INTO users (username, email, password_hash, verify_code, is_verified_email) 
+      VALUES (?, ?, ?, ?, 0)
+    `).run(username, email, hashedPassword, code);
+
+    // Отправляем код
+    try {
+        const sent = await sendVerificationCode(email, code);
+        if (!sent) throw new Error('Gmail отклонил отправку');
+    } catch (mailError) {
+        console.error('ОШИБКА ПОЧТЫ:', mailError);
+        return res.status(500).json({ error: 'Ошибка почты: ' + mailError.message });
+    }
+
+    res.json({ message: 'Код отправлен на почту', email });
+  } catch (err) {
+    console.error('❌ ОШИБКА РЕГИСТРАЦИИ:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/verify-email', (req, res) => {
+  const { email, code } = req.body;
+  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+
+  if (!user) return res.status(404).json({ error: 'Пользователь не найден' });
+  if (user.verify_code !== code) return res.status(400).json({ error: 'Неверный код' });
+
+  db.prepare("UPDATE users SET is_verified_email = 1, verify_code = NULL WHERE id = ?").run(user.id);
+
+  res.json({ message: 'Почта подтверждена!' });
 });
 
 router.post('/login', (req, res) => {
@@ -184,6 +222,27 @@ router.post('/me/avatar', authRequired, upload.single('avatar'), (req, res) => {
   const url = `/uploads/${req.file.filename}`;
   usersRepo.updateAvatar(req.user.id, url);
   res.json({ avatar: url });
+});
+
+// === ПОЛУЧЕНИЕ ВСЕХ ОТЗЫВОВ ПОЛЬЗОВАТЕЛЯ ===
+router.get('/:username/reviews', (req, res) => {
+  const user = usersRepo.findByUsername(req.params.username);
+  if (!user) return res.status(404).json({ error: 'Пользователь не найден' });
+
+  const reviews = db.prepare(`
+    SELECT r.*, 
+           u.username as author_name, u.avatar as author_avatar,
+           p.title as product_title, p.price as product_price, p.id as product_id, p.icon as product_icon,
+           (SELECT url FROM product_images WHERE product_id = p.id LIMIT 1) as product_image
+    FROM reviews r
+    JOIN users u ON u.id = r.author_id
+    JOIN deals d ON d.id = r.deal_id
+    JOIN products p ON p.id = d.product_id
+    WHERE r.target_id = ?
+    ORDER BY r.id DESC
+  `).all(user.id);
+
+  res.json({ reviews });
 });
 
 export default router;
