@@ -1,24 +1,23 @@
-export function renderFooter() {
+	export function renderFooter() {
     if (document.getElementById('siteFooter')) return;
 
     const footerHTML = `
         <footer id="siteFooter" style="background: #121212; padding: 40px 20px 100px 20px; border-top: 1px solid #2a2a2a; margin-top: 40px;">
             <div class="container" style="max-width: 1000px; margin: 0 auto;">
                 
-                <h3 style="color: #fff; font-size: 18px; margin-bottom: 15px;">Способы оплаты</h3>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;">
-                    <div style="background:#222; padding:8px 15px; border-radius:6px; color:#aaa; font-size:14px; font-weight:bold;">VISA</div>
-                    <div style="background:#222; padding:8px 15px; border-radius:6px; color:#aaa; font-size:14px; font-weight:bold;">MC</div>
-                    <div style="background:#222; padding:8px 15px; border-radius:6px; color:#aaa; font-size:14px; font-weight:bold;">МИР</div>
-                </div>
+<h3 style="color: #fff; font-size: 18px; margin-bottom: 15px;">Способы оплаты</h3>
+<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; align-items: center;">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa" style="height: 25px; background: #fff; padding: 2px 5px; border-radius: 4px;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MasterCard" style="height: 25px; background: #fff; padding: 2px 5px; border-radius: 4px;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Mir-logo.SVG.svg" alt="МИР" style="height: 25px; background: #fff; padding: 2px 5px; border-radius: 4px;">
+</div>
 
-                <h3 style="color: #fff; font-size: 18px; margin-bottom: 15px;">Информация</h3>
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
-                    <a href="#" style="color: #aaa; text-decoration: none; font-size: 14px;">Политика конфиденциальности</a>
-                    <a href="#" style="color: #aaa; text-decoration: none; font-size: 14px;">Пользовательское соглашение</a>
-                    <a href="#" style="color: #aaa; text-decoration: none; font-size: 14px;">Условия продажи</a>
-                    <a href="#" style="color: #aaa; text-decoration: none; font-size: 14px;">Контакты</a>
-                </div>
+<div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
+    <a href="/privacy.html" style="color: #aaa; text-decoration: none; font-size: 14px;">Политика конфиденциальности</a>
+    <a href="/agreement.html" style="color: #aaa; text-decoration: none; font-size: 14px;">Пользовательское соглашение</a>
+    <a href="/terms.html" style="color: #aaa; text-decoration: none; font-size: 14px;">Условия продажи</a>
+    <a href="/contacts.html" style="color: #aaa; text-decoration: none; font-size: 14px;">Контакты</a>
+</div>
 
                 <h3 style="color: #fff; font-size: 18px; margin-bottom: 15px;">Социальные сети</h3>
                 <div style="display: flex; gap: 20px; margin-bottom: 30px;">

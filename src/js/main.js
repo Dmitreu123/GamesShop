@@ -95,10 +95,12 @@ function renderGamesStrip(games) {
     const sorted = [...games].sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
 
     strip.innerHTML = sorted.map(g => `
-        <div class="game-strip-item" data-game="${g.id}">
-            <div class="game-strip-icon" style="background: ${g.color}20; color: ${g.color};">
-                <i class="${g.icon}"></i>
-            </div>
+<div class="game-strip-icon" style="background: ${g.color}20; color: ${g.color}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    ${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
+        ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover;">` 
+        : `<i class="${g.icon || 'fas fa-gamepad'}" style="font-size: 24px;"></i>`
+    }
+</div>
             <div class="game-strip-name">${g.name}</div>
         </div>
     `).join('');

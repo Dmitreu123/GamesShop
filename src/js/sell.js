@@ -65,10 +65,10 @@ function renderGames() {
     grid.innerHTML = games.map(g => `
         <a href="?game=${g.id}" class="game-card" data-game="${g.id}">
 <div class="game-icon" style="background: ${g.color ? g.color + '20' : 'rgba(255,255,255,0.05)'}; color: ${g.color || 'var(--primary)'}; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
-    ${g.icon && g.icon.includes('http') 
-        ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" onerror="this.style.display='none'">` 
-        : `<i class="${escapeHTML(g.icon || 'fas fa-gamepad')}" style="font-size: 32px;"></i>`
-    }
+${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
+    ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover;">` 
+    : `<i class="${escapeHTML(g.icon || 'fas fa-gamepad')}" style="font-size: 32px;"></i>`
+}
 </div>
             <div class="game-name">${escapeHTML(g.name)}</div>
             ${g.popular ? '<div class="game-popular">🔥 Топ</div>' : ''}
