@@ -366,3 +366,37 @@ try {
 } catch (e) {
   console.error('[DB] Ошибка миграции ролей:', e.message);
 }
+
+
+// Финальная миграция для Railway
+try {
+  // Добавляем колонки, если их нет
+  const userCols = db.prepare("PRAGMA table_info(users)").all().map(c => c.name);
+  if (!userCols.includes('role')) db.exec("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'");
+  if (!userCols.includes('is_banned')) db.exec("ALTER TABLE users ADD COLUMN is_banned INTEGER DEFAULT 0");
+  if (!userCols.includes('is_verified_email')) db.exec("ALTER TABLE users ADD COLUMN is_verified_email INTEGER DEFAULT 0");
+  if (!userCols.includes('verify_code')) db.exec("ALTER TABLE users ADD COLUMN verify_code TEXT");
+  
+  // Создаем таблицы поддержки, если их нет
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS support_chats (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      status TEXT DEFAULT 'open',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+    CREATE TABLE IF NOT EXISTS support_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      chat_id INTEGER NOT NULL,
+      sender_id INTEGER NOT NULL,
+      text TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (chat_id) REFERENCES support_chats(id),
+      FOREIGN KEY (sender_id) REFERENCES users(id)
+    );
+  `);
+  console.log('[DB] Экстренная миграция завершена');
+} catch (e) {
+  console.error('[DB] Ошибка экстренной миграции:', e.message);
+}
