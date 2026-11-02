@@ -70,6 +70,6 @@ if (process.env.DATABASE_URL) {
   });
 }
 
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Games Shop: http://localhost:${PORT}`);
 });
