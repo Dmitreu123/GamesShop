@@ -349,3 +349,20 @@ try {
 } catch (e) {
   console.error('[DB] Ошибка миграции почты:', e.message);
 }
+
+// Миграция для ролей и других недостающих колонок
+try {
+  const userCols = db.prepare("PRAGMA table_info(users)").all().map(c => c.name);
+  if (!userCols.includes('role')) {
+    db.exec("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'");
+    db.exec("UPDATE users SET role = 'admin' WHERE email = 'admin@games.shop'");
+    console.log('[DB] Добавлена колонка role');
+  }
+  if (!userCols.includes('is_banned')) {
+    db.exec("ALTER TABLE users ADD COLUMN is_banned INTEGER DEFAULT 0");
+    db.exec("ALTER TABLE users ADD COLUMN ban_reason TEXT");
+    console.log('[DB] Добавлены колонки is_banned и ban_reason');
+  }
+} catch (e) {
+  console.error('[DB] Ошибка миграции ролей:', e.message);
+}
