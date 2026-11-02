@@ -1,22 +1,16 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import 'dotenv/config';
 
+// Инициализируем Resend с нашим API-ключом
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  connectionTimeout: 10000, // Ждем 10 секунд максимум
-  greetingTimeout: 10000,
-  socketTimeout: 10000
-});
-
+// Функция отправки кода подтверждения
 export async function sendVerificationCode(email, code) {
   try {
-    await transporter.sendMail({
-      from: `"Games Shop" <${process.env.EMAIL_USER}>`,
+    const { data, error } = await resend.emails.send({
+      // ВАЖНО: Пока домен не подтвержден, используем onboarding@resend.dev.
+      // Позже, когда подтвердишь свой домен на Resend, заменишь на 'Games Shop <noreply@твойдомен.com>'
+      from: 'Games Shop <onboarding@resend.dev>',
       to: email,
       subject: 'Код подтверждения — Games Shop',
       html: `
@@ -28,9 +22,16 @@ export async function sendVerificationCode(email, code) {
         </div>
       `
     });
+
+    if (error) {
+      console.error('Ошибка Resend:', error);
+      return false;
+    }
+
+    console.log('Письмо успешно отправлено через Resend:', data.id);
     return true;
-  } catch (error) {
-    console.error('Ошибка отправки письма:', error);
+  } catch (err) {
+    console.error('Критическая ошибка отправки:', err.message);
     return false;
   }
 }
