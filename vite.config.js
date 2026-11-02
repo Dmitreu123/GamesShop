@@ -1,5 +1,10 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Правильное определение __dirname для ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   server: {
@@ -19,7 +24,6 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'index.html'),
         login: path.resolve(__dirname, 'login.html'),
-        register: path.resolve(__dirname, 'login.html'), // У тебя регистрация на той же странице
         profile: path.resolve(__dirname, 'profile.html'),
         product: path.resolve(__dirname, 'product.html'),
         sell: path.resolve(__dirname, 'sell.html'),
