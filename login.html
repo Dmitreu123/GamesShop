@@ -115,15 +115,22 @@
         }
     });
 
-// Обработчик РЕГИСТРАЦИИ
 forms.register.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Отправка кода...'; // Показываем, что идет работа
+    
     try {
         await register(e.target.username.value, e.target.email.value, e.target.password.value);
     } catch (err) {
-        showError(err.message);
+        showError(err.message); // Показываем ошибку, если что-то не так
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Зарегистрироваться';
     }
 });
+
 
 // Обработчик ВВОДА КОДА (добавь этот блок)
 if (verifyForm) {

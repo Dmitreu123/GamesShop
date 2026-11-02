@@ -38,10 +38,10 @@ export async function register(username, email, password) {
         body: JSON.stringify({ username, email, password })
     });
 
-    // Запоминаем почту
+    // Сохраняем почту
     localStorage.setItem('games_shop_pending_email', email);
 
-    // Принудительно переключаем формы
+    // Переключаем формы ТОЛЬКО если сервер ответил успешно
     const registerForm = document.getElementById('registerForm');
     const verifyForm = document.getElementById('verifyForm');
 
