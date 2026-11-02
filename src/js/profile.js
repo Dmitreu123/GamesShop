@@ -26,11 +26,20 @@ function getUsername() {
 /* ---------- Загрузка профиля ---------- */
 
 async function loadProfile() {
-    const username = getUsername();
-    if (!username) {
+let username = getUsername();
+
+// Если в ссылке нет ?u=..., берем ник из текущего залогиненного пользователя
+if (!username) {
+    const me = getUser();
+    if (me && me.username) {
+        username = me.username;
+        // Подменяем ссылку в браузере, чтобы было красиво
+        history.replaceState({}, '', `/profile.html?u=${encodeURIComponent(username)}`);
+    } else {
         renderError('Пользователь не указан');
         return;
     }
+}
 
     try {
 const token = getToken();
