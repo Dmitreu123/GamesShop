@@ -39,30 +39,43 @@ router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     console.log('🔥 ПОПЫТКА РЕГИСТРАЦИИ:', { username, email });
 
-    const existing = db.prepare("SELECT * FROM users WHERE email = ? OR username = ?").get(email, username);
-    if (existing) {
-      return res.status(400).json({ error: 'Ник или Email уже заняты' });
+    // 1. Проверяем email
+    const existingEmail = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+
+    // Если почта есть и ОНА УЖЕ ПОДТВЕРЖДЕНА — блокируем
+    if (existingEmail && existingEmail.is_verified_email === 1) {
+      return res.status(400).json({ error: 'Этот Email уже зарегистрирован и подтвержден' });
     }
 
-    // Генерируем код
+    // 2. Проверяем ник (если он занят кем-то ДРУГИМ)
+    const existingUsername = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
+    if (existingUsername && (!existingEmail || existingUsername.id !== existingEmail.id)) {
+      return res.status(400).json({ error: 'Этот Ник уже занят' });
+    }
+
+    // 3. Хэшируем пароль
+    const hashedPassword = bcrypt.hashSync(password, 10);
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Хэшируем пароль перед сохранением
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    if (existingEmail && existingEmail.is_verified_email === 0) {
+        // Если почта есть, но не подтверждена — просто ОБНОВЛЯЕМ данные и код
+        db.prepare("UPDATE users SET username = ?, password_hash = ?, verify_code = ? WHERE id = ?")
+          .run(username, hashedPassword, code, existingEmail.id);
+    } else {
+        // Если почты нет — создаем нового
+        db.prepare(`
+          INSERT INTO users (username, email, password_hash, verify_code, is_verified_email)
+          VALUES (?, ?, ?, ?, 0)
+        `).run(username, email, hashedPassword, code);
+    }
 
-    // Сохраняем пользователя (Одна запись, всё закрыто)
-    db.prepare(`
-      INSERT INTO users (username, email, password_hash, verify_code, is_verified_email) 
-      VALUES (?, ?, ?, ?, 0)
-    `).run(username, email, hashedPassword, code);
-
-    // Отправляем код
+    // 4. Отправляем код
     try {
         const sent = await sendVerificationCode(email, code);
         if (!sent) throw new Error('Gmail отклонил отправку');
     } catch (mailError) {
         console.error('ОШИБКА ПОЧТЫ:', mailError);
-        return res.status(500).json({ error: 'Ошибка почты: ' + mailError.message });
+        return res.status(500).json({ error: 'Ошибка отправки письма: ' + mailError.message });
     }
 
     res.json({ message: 'Код отправлен на почту', email });
