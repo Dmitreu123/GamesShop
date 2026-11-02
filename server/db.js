@@ -400,3 +400,35 @@ try {
 } catch (e) {
   console.error('[DB] Ошибка экстренной миграции:', e.message);
 }
+
+// Автоматическое создание и заполнение категорий для игр
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS game_categories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      game_id TEXT NOT NULL,
+      title TEXT NOT NULL,
+      icon TEXT DEFAULT 'fas fa-box',
+      commission INTEGER DEFAULT 15,
+      color TEXT DEFAULT '#2196f3'
+    );
+  `);
+
+  // Проверяем, пустая ли таблица
+  const count = db.prepare("SELECT COUNT(*) c FROM game_categories").get().c;
+  
+  if (count === 0) {
+    const insert = db.prepare("INSERT INTO game_categories (game_id, title, icon, commission, color) VALUES (?, ?, ?, ?, ?)");
+    const games = ['pubg', 'brawl', 'standoff2', 'roblox', 'minecraft', 'cs2', 'dota2', 'valorant', 'rust', 'apex'];
+    
+    for (const g of games) {
+      insert.run(g, 'Аккаунты', 'fas fa-user', 15, '#3b82f6');
+      insert.run(g, 'Игровая валюта', 'fas fa-coins', 10, '#f59e0b');
+      insert.run(g, 'Бусты', 'fas fa-rocket', 15, '#f97316');
+      insert.run(g, 'Услуги', 'fas fa-hands-helping', 15, '#06b6d4');
+    }
+    console.log('[DB] Категории для всех игр успешно добавлены');
+  }
+} catch (e) {
+  console.error('[DB] Ошибка миграции категорий:', e.message);
+}

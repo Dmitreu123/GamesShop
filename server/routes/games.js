@@ -101,20 +101,15 @@ router.get('/', (req, res) => {
 /* GET /api/games/:id/categories - категории для игры из БД */
 router.get('/:id/categories', (req, res) => {
   try {
-    const gameId = req.params.id; // Берем ID как строку (pubg, cs2 и т.д.)
-
-    // Ищем игру в твоем жестком массиве GAMES
+    const gameId = req.params.id;
     const game = GAMES.find(g => g.id === gameId);
-
+    
     // Берем категории из базы данных
     const categories = db.prepare("SELECT * FROM game_categories WHERE game_id = ?").all(gameId);
-
+    
     res.json({
-      game: game ? { id: game.id, name: game.name, icon: game.icon, color: game.color } : { id: gameId, name: 'Игра', icon: 'fas fa-gamepad', color: '#2196f3' },
-      categories: categories.length > 0 ? categories : [
-        { id: 'accounts', title: 'Аккаунты', icon: 'fas fa-user', color: '#2196f3' }
-      ],
-      rules: game ? (game.rules || {}) : {}
+      game: game ? { id: game.id, name: game.name, icon: game.icon, color: game.color } : { id: gameId, name: 'Игра' },
+      categories: categories.length > 0 ? categories : [{ id: 'accounts', title: 'Аккаунты', icon: 'fas fa-user' }]
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
