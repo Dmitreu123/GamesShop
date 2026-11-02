@@ -1,54 +1,133 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ-панель — Games Shop</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/src/css/style.css">
-    <style>
-        .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
-        .admin-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; }
-        .admin-card h3 { font-size: 24px; color: #10b981; margin-bottom: 4px; }
-        .admin-card p { font-size: 12px; color: var(--text-dim); }
-        .admin-user-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); }
-        .admin-user-row:last-child { border-bottom: none; }
-        .admin-user-info h4 { color: white; font-size: 14px; }
-        .admin-user-info p { color: var(--text-dim); font-size: 12px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель | Games Shop</title>
+  <style>
+    body { background: #121212; color: #fff; font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .tab-btn { background: #1e1e1e; color: #aaa; border: 1px solid #333; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+    .tab-btn:hover { background: #2a2a2a; color: #fff; }
+    .tab-btn.active { background: #2196f3; color: #fff; border-color: #2196f3; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .card { background: #1e1e1e; padding: 20px; border-radius: 10px; border: 1px solid #333; }
+    .card h3 { margin: 0 0 10px 0; color: #888; font-size: 14px; font-weight: normal; }
+    .card .value { font-size: 24px; font-weight: bold; color: #4caf50; }
+    .card.warning .value { color: #f44336; }
+    table { width: 100%; border-collapse: collapse; background: #1e1e1e; border-radius: 10px; overflow: hidden; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #333; }
+    th { background: #2a2a2a; color: #aaa; font-size: 12px; text-transform: uppercase; }
+    tr.banned { opacity: 0.6; }
+    .btn { padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
+    .btn-ban { background: #f44336; color: #fff; }
+    .btn-unban { background: #4caf50; color: #fff; }
+    .btn-mod { background: #ff9800; color: #fff; }
+    .controls { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+    .search, .sort { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #1e1e1e; color: #fff; }
+    .search { flex: 1; min-width: 200px; }
+    .sort { width: 200px; }
+    a { color: #2196f3; text-decoration: none; }
+  </style>
 </head>
 <body>
+  <div class="header">
+    <h2>Панель управления</h2>
+    <a href="/">← На главную</a>
+  </div>
 
-<header>
-    <div class="container header-inner">
-        <a href="/" class="logo"><i class="fas fa-gamepad"></i><span>Games Shop</span></a>
-        <nav class="nav-actions">
-            <a href="/" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Назад</a>
-        </nav>
+<div class="tabs">
+    <button class="tab-btn active" data-tab="stats">📊 Статистика</button>
+    <button class="tab-btn" data-tab="users">👥 Пользователи</button>
+    <button class="tab-btn" data-tab="disputes">⚖️ Споры</button>
+    <button class="tab-btn" data-tab="support">🆘 Поддержка</button> <!-- ВОТ ЭТА СТРОКА -->
+</div>
+
+  <!-- ВКЛАДКА: СТАТИСТИКА -->
+  <div id="tab-stats" class="tab-content active">
+    <div class="grid" id="stats-container">
+      <div class="card"><h3>Загрузка...</h3></div>
     </div>
-</header>
+  </div>
 
-<main class="container" style="padding-top:20px; padding-bottom:40px;">
-    <h1 style="color:white; margin-bottom:20px;">👑 Админ-панель</h1>
-    
-    <!-- Статистика -->
-    <div class="admin-stats" id="statsContainer">
-        <div class="admin-card"><h3>-</h3><p>Пользователей</p></div>
-        <div class="admin-card"><h3>-</h3><p>Сделок</p></div>
-        <div class="admin-card"><h3>-</h3><p>Комиссия (₽)</p></div>
-        <div class="admin-card"><h3>-</h3><p>Товаров</p></div>
+  <!-- ВКЛАДКА: ПОЛЬЗОВАТЕЛИ -->
+  <div id="tab-users" class="tab-content">
+    <div class="controls">
+      <input type="text" id="search" class="search" placeholder="Поиск по ID, нику или email...">
+      <select id="sort" class="sort">
+        <option value="id-desc">Сначала новые</option>
+        <option value="id-asc">Сначала старые</option>
+        <option value="balance-desc">По балансу (убывание)</option>
+        <option value="balance-asc">По балансу (возрастание)</option>
+      </select>
     </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Юзер</th>
+          <th>Email</th>
+          <th>Баланс</th>
+          <th>Статус</th>
+          <th>Действие</th>
+        </tr>
+      </thead>
+      <tbody id="users-list"></tbody>
+    </table>
+  </div>
 
-    <!-- Список юзеров -->
-    <div class="admin-card" style="text-align:left; padding:0;">
-        <div style="padding:16px; border-bottom:1px solid var(--border);">
-            <h3 style="font-size:16px; color:white;">Пользователи</h3>
-        </div>
-        <div id="usersList"></div>
+  <!-- ВКЛАДКА: СПОРЫ -->
+  <div id="tab-disputes" class="tab-content">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Товар</th>
+          <th>Покупатель</th>
+          <th>Продавец</th>
+          <th>Сумма</th>
+          <th>Действие</th>
+        </tr>
+      </thead>
+      <tbody id="disputes-list"></tbody>
+    </table>
+  </div>
+
+<!-- ВКЛАДКА: ПОДДЕРЖКА -->
+<div id="tab-support" class="tab-content">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Пользователь</th>
+        <th>Последнее сообщение</th>
+        <th>Действие</th>
+      </tr>
+    </thead>
+    <tbody id="support-list">
+      <tr><td colspan="4" style="text-align:center;">Загрузка...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ЧАТА -->
+<div id="supportModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#1e1e1e; width:100%; max-width:500px; height:80vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; border:1px solid #333;">
+    <div style="padding:15px; background:#2a2a2a; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+      <h3 id="supportUserName" style="margin:0; color:#fff; font-size:16px;">Пользователь</h3>
+      <button onclick="document.getElementById('supportModal').style.display='none'" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;"><i class="fas fa-times"></i>✖</button>
     </div>
-</main>
+    <div id="supportChatMessages" style="flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; background:#121212;"></div>
+    <div style="padding:10px; background:#2a2a2a; display:flex; gap:10px;">
+      <input type="text" id="adminSupportInput" placeholder="Ответить..." style="flex:1; padding:10px; border-radius:8px; border:none; background:#121212; color:#fff; outline:none;">
+      <button id="adminSupportSend" style="padding:10px 15px; background:#2196f3; color:#fff; border:none; border-radius:8px; cursor:pointer;">Отправить</button>
+    </div>
+  </div>
+</div>
 
-<div class="toast-container" id="toastContainer"></div>
-<script type="module" src="/src/js/admin.js"></script>
+  <script src="/admin.js"></script>
 </body>
 </html>
