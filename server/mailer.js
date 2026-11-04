@@ -10,7 +10,7 @@ export async function sendVerificationCode(email, code) {
     const { data, error } = await resend.emails.send({
       // ВАЖНО: Пока домен не подтвержден, используем onboarding@resend.dev.
       // Позже, когда подтвердишь свой домен на Resend, заменишь на 'Games Shop <noreply@твойдомен.com>'
-      from: 'Games Shop <onboarding@resend.dev>',
+from: 'Games Shop <noreply@games-shop.shop>',
       to: email,
       subject: 'Код подтверждения — Games Shop',
       html: `
