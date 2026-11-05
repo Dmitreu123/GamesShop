@@ -8,7 +8,7 @@ if (!productId || !isLoggedIn()) {
     window.location.href = '/';
 }
 
-const form = document.getElementById('saveBtn');
+const btnSave = document.getElementById('saveBtn');
 
 async function loadProduct() {
     try {
@@ -26,24 +26,27 @@ async function loadProduct() {
     }
 }
 
-form.addEventListener('click', async () => {
-    const btn = form;
-    btn.disabled = true;
-    btn.textContent = 'Сохранение...';
+btnSave.addEventListener('click', async () => {
+    btnSave.disabled = true;
+    btnSave.textContent = 'Сохранение...';
 
-    const fd = new FormData();
-    fd.append('title', document.getElementById('title').value);
-    fd.append('price', document.getElementById('price').value);
-    fd.append('description', document.getElementById('description').value);
-    fd.append('login', document.getElementById('login').value);
-    fd.append('password', document.getElementById('password').value);
-    fd.append('game', 'other'); // Заглушка, чтобы сервер не ругался (если нужно)
+    // Собираем данные в обычный объект
+    const payload = {
+        title: document.getElementById('title').value,
+        price: Number(document.getElementById('price').value),
+        description: document.getElementById('description').value,
+        login: document.getElementById('login').value,
+        password: document.getElementById('password').value
+    };
 
     try {
         const res = await fetch(`/api/products/${productId}`, {
             method: 'PUT',
-            headers: { Authorization: `Bearer ${getToken()}` },
-            body: fd
+            headers: { 
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json' // <-- Говорим, что отправляем JSON
+            },
+            body: JSON.stringify(payload) // <-- Превращаем объект в строку
         });
         
         const data = await res.json();
@@ -54,8 +57,8 @@ form.addEventListener('click', async () => {
         
     } catch (err) {
         showToast(err.message, 'error');
-        btn.disabled = false;
-        btn.textContent = 'Сохранить изменения';
+        btnSave.disabled = false;
+        btnSave.textContent = 'Сохранить изменения';
     }
 });
 
