@@ -7,59 +7,71 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/src/css/style.css">
     <style>
-        .edit-container { max-width: 600px; margin: 20px auto; padding: 20px; background: var(--bg-2); border-radius: 12px; }
-        .edit-container h1 { margin-bottom: 20px; font-size: 24px; }
+        .edit-page { background: #121212; min-height: 100vh; padding: 20px; padding-bottom: 100px; color: #fff; }
+        .edit-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; font-size: 20px; font-weight: bold; }
+        .edit-card { background: #1e1e1e; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #2a2a2a; }
+        .edit-card h3 { margin-top: 0; font-size: 18px; color: #fff; display: flex; align-items: center; gap: 8px; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 14px; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 12px; background: #0d1b1d; border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 16px; box-sizing: border-box;
-        }
-        .form-group textarea { height: 100px; resize: vertical; }
-        .btn-save { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .form-group label { display: block; color: #888; font-size: 13px; margin-bottom: 6px; }
+        .form-group input, .form-group textarea { width: 100%; background: #121212; border: 1px solid #333; border-radius: 8px; padding: 12px; color: #fff; font-size: 15px; box-sizing: border-box; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #2196f3; outline: none; }
+        .btn-save { width: 100%; background: #2196f3; color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .instruction-text { color: #ccc; font-size: 14px; line-height: 1.5; }
+        .instruction-text ul { padding-left: 20px; margin: 10px 0; }
+        .instruction-text li { margin-bottom: 8px; }
+        .link-input { background: #121212; border: 1px solid #333; color: #2196f3; padding: 12px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-inner">
-            <a href="/" class="logo"><i class="fas fa-gamepad"></i> <span>Games Shop</span></a>
-            <nav class="nav-actions">
-                <a href="/profile.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Назад</a>
-            </nav>
+    <div class="edit-page">
+        <div class="edit-header">
+            <a href="javascript:history.back()" style="color: #fff; text-decoration: none;"><i class="fas fa-arrow-left"></i></a>
+            <span>Редактировать товар</span>
+            <a href="#" id="deleteBtn" style="color: #f44336; text-decoration: none; margin-left: auto; font-size: 14px;">Удалить</a>
         </div>
-    </header>
 
-    <main class="container">
-        <div class="edit-container">
-            <h1>Редактировать товар</h1>
-            <form id="editForm">
-                <div class="form-group">
-                    <label>Название</label>
-                    <input type="text" id="title" required>
-                </div>
-                <div class="form-group">
-                    <label>Цена (₽)</label>
-                    <input type="number" id="price" required>
-                </div>
-                <div class="form-group">
-                    <label>Описание</label>
-                    <textarea id="description"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Логин (если аккаунт)</label>
-                    <input type="text" id="login">
-                </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <input type="text" id="password">
-                </div>
-                <div class="form-group">
-                    <label>Комментарий</label>
-                    <textarea id="comment"></textarea>
-                </div>
-                <button type="submit" class="btn-save">Сохранить изменения</button>
-            </form>
+        <div class="edit-card">
+            <h3><i class="fas fa-info-circle" style="color: #2196f3;"></i> Основное</h3>
+            <div class="form-group">
+                <label>Название товара</label>
+                <input type="text" id="title" required>
+            </div>
+            <div class="form-group">
+                <label>Цена (₽)</label>
+                <input type="number" id="price" required>
+            </div>
+            <div class="form-group">
+                <label>Описание</label>
+                <textarea id="description" rows="4"></textarea>
+            </div>
         </div>
-    </main>
+
+        <div class="edit-card">
+            <h3><i class="fas fa-lock" style="color: #ff9800;"></i> Данные товара</h3>
+            <div class="form-group">
+                <label>Логин / Ссылка / Ключ (скопируйте и вставьте в браузер)</label>
+                <textarea id="login" rows="2" placeholder="Введите данные для передачи..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Пароль / Доп. данные</label>
+                <input type="text" id="password">
+            </div>
+        </div>
+
+        <div class="edit-card">
+            <h3><i class="fas fa-book" style="color: #4caf50;"></i> Инструкция после продажи</h3>
+            <div class="instruction-text">
+                <ul>
+                    <li><b>Удержание средств:</b> средства удерживаются на стороне площадки для безопасности сделки.</li>
+                    <li><b>Выполнение заказа:</b> просмотрите чат вашей сделки и выполните заказ. У вас есть 24 часа чтобы предоставить товар. Нажмите кнопку «Я выполнил» в том случае, если товар был предоставлен покупателю.</li>
+                    <li><b>Проверка товара:</b> если все в порядке, покупатель подтвердит получение. Средства будут заморожены на 48 часов для безопасности.</li>
+                    <li><b>Запрещено:</b> нажимать «Я выполнил» до того, как покупатель получит товар, и вести переписку за пределами Games Shop.</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="btn-save" id="saveBtn">Сохранить изменения</button>
+    </div>
 
     <script type="module" src="/src/js/edit.js"></script>
 </body>

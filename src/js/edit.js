@@ -1,17 +1,15 @@
-import { getToken } from './auth.js';
+import { getToken, isLoggedIn } from './auth.js';
 import { showToast } from './utils.js';
 
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
 
-if (!productId) {
-    alert('ID товара не найден!');
+if (!productId || !isLoggedIn()) {
     window.location.href = '/';
 }
 
-const form = document.getElementById('editForm');
+const form = document.getElementById('saveBtn');
 
-// Загружаем данные товара
 async function loadProduct() {
     try {
         const res = await fetch(`/api/products/${productId}`);
@@ -23,16 +21,13 @@ async function loadProduct() {
         document.getElementById('description').value = data.description || '';
         document.getElementById('login').value = data.login || '';
         document.getElementById('password').value = data.password || '';
-        document.getElementById('comment').value = data.comment || '';
     } catch (err) {
         showToast('Не удалось загрузить товар', 'error');
     }
 }
 
-// Сохраняем изменения
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = form.querySelector('button');
+form.addEventListener('click', async () => {
+    const btn = form;
     btn.disabled = true;
     btn.textContent = 'Сохранение...';
 
@@ -42,7 +37,7 @@ form.addEventListener('submit', async (e) => {
     fd.append('description', document.getElementById('description').value);
     fd.append('login', document.getElementById('login').value);
     fd.append('password', document.getElementById('password').value);
-    fd.append('comment', document.getElementById('comment').value);
+    fd.append('game', 'other'); // Заглушка, чтобы сервер не ругался (если нужно)
 
     try {
         const res = await fetch(`/api/products/${productId}`, {
@@ -55,9 +50,7 @@ form.addEventListener('submit', async (e) => {
         if (!res.ok) throw new Error(data.error || 'Ошибка сохранения');
 
         showToast('Товар обновлен!', 'success');
-        setTimeout(() => {
-            window.location.href = `/product.html?id=${productId}`;
-        }, 1000);
+        setTimeout(() => { window.location.href = `/product.html?id=${productId}`; }, 1000);
         
     } catch (err) {
         showToast(err.message, 'error');

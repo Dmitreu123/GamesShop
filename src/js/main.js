@@ -94,35 +94,40 @@ function renderGamesStrip(games) {
 
     const sorted = [...games].sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
 
+    // ПРАВИЛЬНАЯ ГЕНЕРАЦИЯ HTML (добавлена обертка с data-game)
     strip.innerHTML = sorted.map(g => `
-<div class="game-strip-icon" style="background: ${g.color}20; color: ${g.color}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-    ${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
-        ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover;">` 
-        : `<i class="${g.icon || 'fas fa-gamepad'}" style="font-size: 24px;"></i>`
-    }
-</div>
+        <div class="game-strip-item" data-game="${g.id}" style="cursor: pointer;">
+            <div class="game-strip-icon" style="background: ${g.color ? g.color + '20' : 'rgba(255,255,255,0.05)'}; color: ${g.color || 'var(--primary)'}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                ${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
+                    ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover;">` 
+                    : `<i class="${g.icon || 'fas fa-gamepad'}" style="font-size: 24px;"></i>`
+                }
+            </div>
             <div class="game-strip-name">${g.name}</div>
         </div>
     `).join('');
 
+    // Обработчик клика (он у тебя уже написан правильно, оставляем как есть)
     strip.addEventListener('click', (e) => {
         const item = e.target.closest('[data-game]');
         if (!item) return;
 
         const gameId = item.dataset.game;
-        strip.querySelectorAll('.game-strip-item').forEach(i => i.classList.remove('active'));
+        
+        // Визуально выделяем выбранную игру
+        strip.querySelectorAll('.game-strip-item').forEach(el => el.classList.remove('active'));
         item.classList.add('active');
-
-        document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
 
         currentFilter.game = gameId;
         currentFilter.category = 'all';
         pagination.currentPage = 1;
         applyFilter();
 
-        document.querySelector('.product-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelector('.product-grid')?.scrollIntoView({ behavior: 'smooth' });
     });
 }
+
+
 
 /* ---------- Сортировка ---------- */
 
