@@ -354,35 +354,60 @@ router.post('/:id/remove', authRequired, (req, res) => {
 
 /* ---------- PUT /:id — редактировать товар ---------- */
 
-router.put('/:id', authRequired, (req, res) => {
-  const product = productsRepo.byId(Number(req.params.id));
+router.put('/:id', authRequired, upload.array('images'), (req, res) => {
+  const productId = Number(req.params.id);
+  const product = productsRepo.byId(productId);
+
   if (!product) return res.status(404).json({ error: 'Товар не найден' });
   if (product.seller_id !== req.user.id) return res.status(403).json({ error: 'Нет доступа' });
 
   const { title, description, price, subcategory, transfer_type, login, password, account_id, comment } = req.body;
+  const newPrice = Number(price);
 
-  if (!title || !price) return res.status(400).json({ error: 'Заполните обязательные поля' });
-  if (Number(price) < 50) return res.status(400).json({ error: 'Минимальная цена — 50 ₽' });
+  // Проверка цены (нельзя завышать)
+  const maxPrice = product.old_price || product.price; 
+  if (newPrice > maxPrice) {
+    return res.status(400).json({ error: `Нельзя завышать цену. Максимальная: ${maxPrice} ₽` });
+  }
+
+  // Если цена снижена, записываем старую цену в old_price
+  let finalOldPrice = product.old_price;
+  if (newPrice < maxPrice && !product.old_price) {
+      finalOldPrice = maxPrice;
+  }
 
   db.prepare(`
     UPDATE products
-    SET title = ?, description = ?, price = ?, subcategory = ?,
+    SET title = ?, description = ?, price = ?, old_price = ?, subcategory = ?,
         transfer_type = ?, login = ?, password = ?, account_id = ?, comment = ?
     WHERE id = ?
   `).run(
-    title,
+    title || product.title,
     description || '',
-    Number(price),
+    newPrice,
+    finalOldPrice,
     subcategory || '',
     transfer_type || product.transfer_type,
     login || '',
     password || '',
     account_id || '',
     comment || '',
-    product.id
+    productId
   );
 
-  res.json(productsRepo.byId(product.id));
+  // Обработка новых картинок
+  if (req.files && req.files.length > 0) {
+      // Удаляем старые картинки из базы (физически файлы можно оставить)
+      db.prepare("DELETE FROM product_images WHERE product_id = ?").run(productId);
+      
+      // Добавляем новые
+      const insertImg = db.prepare("INSERT INTO product_images (product_id, url) VALUES (?, ?)");
+      req.files.forEach(file => {
+          insertImg.run(productId, `/uploads/${file.filename}`);
+      });
+  }
+
+  res.json(productsRepo.byId(productId));
 });
 
 

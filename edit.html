@@ -30,21 +30,33 @@
             <a href="#" id="deleteBtn" style="color: #f44336; text-decoration: none; margin-left: auto; font-size: 14px;">Удалить</a>
         </div>
 
-        <div class="edit-card">
-            <h3><i class="fas fa-info-circle" style="color: #2196f3;"></i> Основное</h3>
-            <div class="form-group">
-                <label>Название товара</label>
-                <input type="text" id="title" required>
-            </div>
-            <div class="form-group">
-                <label>Цена (₽)</label>
-                <input type="number" id="price" required>
-            </div>
-            <div class="form-group">
-                <label>Описание</label>
-                <textarea id="description" rows="4"></textarea>
-            </div>
+<div class="edit-card">
+    <h3><i class="fas fa-info-circle" style="color: #2196f3;"></i> Основное</h3>
+    <div class="form-group">
+        <label>Название товара</label>
+        <input type="text" id="title" required>
+    </div>
+    
+    <div class="form-group">
+        <label>Фотографии (до 10 шт)</label>
+        <div id="currentImages" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;"></div>
+        <input type="file" id="newImages" multiple accept="image/*" style="color: #888;">
+    </div>
+
+    <div class="form-group">
+        <label>Цена (₽)</label>
+        <input type="number" id="price" required>
+        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px;">
+            <span style="color: #888;">Было: <span id="oldPriceDisplay" style="text-decoration: line-through;"></span></span>
+            <span style="color: #4caf50; font-weight: bold;">Вы получите: <span id="payoutDisplay">0</span> ₽</span>
         </div>
+    </div>
+    
+    <div class="form-group">
+        <label>Описание</label>
+        <textarea id="description" rows="4"></textarea>
+    </div>
+</div>
 
         <div class="edit-card">
             <h3><i class="fas fa-lock" style="color: #ff9800;"></i> Данные товара</h3>
