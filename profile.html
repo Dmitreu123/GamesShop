@@ -12,64 +12,53 @@
 <body>
 
 <!-- ☰ МЕНЮ -->
-<div class="profile-menu-overlay" id="profileMenu">
-    <div class="profile-menu-panel">
-        <div class="profile-menu-header">
-            <h2>Меню</h2>
-            <button class="profile-menu-close" id="profileMenuClose"><i class="fas fa-times"></i></button>
-        </div>
-
-        <div class="profile-menu-avatar-block">
-            <div class="profile-menu-avatar" id="menuAvatar">?</div>
-            <button class="profile-menu-change-avatar" id="menuChangeAvatar">Изменить фото</button>
-            <input type="file" id="menuAvatarInput" accept="image/*" style="display:none;">
-        </div>
-
-        <div class="profile-menu-item profile-menu-email">
-            <div class="profile-menu-icon" style="background:#fff;">
-                <i class="fas fa-at" style="color:#3b82f6;"></i>
-            </div>
-            <div class="profile-menu-info">
-                <div class="profile-menu-label">Адрес электронной почты</div>
-                <div class="profile-menu-value" id="menuEmail">—</div>
-            </div>
-        </div>
-
-        <div class="profile-menu-item">
-            <div class="profile-menu-icon">
-                <i class="fas fa-bell"></i>
-            </div>
-            <div class="profile-menu-info">
-                <div class="profile-menu-title">Уведомления</div>
-                <div class="profile-menu-subtitle">Новые сообщения</div>
-            </div>
-<label class="gs-switch">
-    <input type="checkbox" id="menuNotificationsToggle" checked>
-    <span class="gs-slider"></span>
-</label>
-        </div>
-
-        <div class="profile-menu-item">
-            <div class="profile-menu-icon" style="background:rgba(245,158,11,0.15);color:#f59e0b;">
-                <i class="fas fa-lock"></i>
-            </div>
-            <div class="profile-menu-info">
-                <div class="profile-menu-title">Защита средств</div>
-                <div class="profile-menu-subtitle">Подтверждение действий</div>
-            </div>
-<label class="gs-switch">
-    <input type="checkbox" id="menuProtectionToggle">
-    <span class="gs-slider"></span>
-</label>
-        </div>
-
-<a href="/support.html" class="profile-menu-link">
-    <i class="fas fa-comments" style="color:#3b82f6;"></i> Написать в поддержку
-</a>
-        <button class="profile-menu-logout" id="menuLogout">
-            <i class="fas fa-sign-out-alt"></i> Выйти из профиля
-        </button>
+<div class="profile-menu-panel" style="background: #121212; border-left: 1px solid #2a2a2a; width: 300px; height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 style="margin: 0; font-size: 20px; color: #fff;">Настройки</h2>
+        <button id="profileMenuClose" style="background: none; border: none; color: #888; font-size: 24px; cursor: pointer;"><i class="fas fa-times"></i></button>
     </div>
+
+    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
+        <div id="menuAvatar" style="width: 80px; height: 80px; background: var(--primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; color: #fff; overflow: hidden; margin-bottom: 15px; border: 2px solid #333;">?</div>
+        <button id="menuChangeAvatar" style="background: transparent; border: none; color: var(--primary); font-size: 14px; font-weight: 600; cursor: pointer;">Изменить фото</button>
+        <input type="file" id="menuAvatarInput" accept="image/*" style="display: none;">
+    </div>
+
+    <div style="background: #1a1a1a; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+        <div style="color: #888; font-size: 12px; margin-bottom: 5px;">Email</div>
+        <div id="menuEmail" style="color: #fff; font-size: 15px; font-weight: 500; word-break: break-all;">—</div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px;">
+        <div>
+            <div style="color: #fff; font-size: 16px; font-weight: 500;">Уведомления</div>
+            <div style="color: #666; font-size: 12px;">Новые сообщения</div>
+        </div>
+        <label class="gs-switch">
+            <input type="checkbox" id="menuNotificationsToggle" checked>
+            <span class="gs-slider"></span>
+        </label>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 0 5px;">
+        <div>
+            <div style="color: #fff; font-size: 16px; font-weight: 500;">Защита средств</div>
+            <div style="color: #666; font-size: 12px;">Подтверждение действий</div>
+        </div>
+        <label class="gs-switch">
+            <input type="checkbox" id="menuProtectionToggle">
+            <span class="gs-slider"></span>
+        </label>
+    </div>
+
+    <a href="/support.html" style="display: flex; align-items: center; gap: 10px; color: var(--primary); text-decoration: none; font-size: 16px; font-weight: 600; margin-bottom: 30px;">
+        <i class="fas fa-headset"></i> Написать в поддержку
+    </a>
+
+    <button class="profile-menu-logout" id="menuLogout" style="width: 100%; padding: 15px; background: rgba(244, 67, 54, 0.1); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3); border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;">
+        <i class="fas fa-sign-out-alt"></i> Выйти из профиля
+    </button>
+</div>
 </div>
 
 <header class="profile-topbar">

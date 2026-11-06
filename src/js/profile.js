@@ -123,11 +123,11 @@ function renderProfile() {
             <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
                 
                 <!-- Рейтинг -->
-                <div class="gs-stat-pill">
-                    <span style="color: #ffc107; letter-spacing: 1px;">${starsHTML}</span>
-                    <b style="color: #fff; margin-left: 5px;">${(profileUser.rating || 0).toFixed(1)}</b>
-                    <a href="/reviews.html?user=${profileUser.username}" style="color: #888; text-decoration: none; font-size: 12px; margin-left: 5px;">(${profileUser.reviews_count || 0})</a>
-                </div>
+<a href="/reviews.html?user=${profileUser.username}" class="gs-stat-pill" style="text-decoration: none; cursor: pointer;">
+    <span style="color: #ffc107; letter-spacing: 1px;">${starsHTML}</span>
+    <b style="color: #fff; margin-left: 5px;">${(profileUser.rating || 0).toFixed(1)}</b>
+    <span style="color: #888; font-size: 12px; margin-left: 5px;">(${profileUser.reviews_count || 0})</span>
+</a>
 
                 <!-- Баланс (только для владельца) -->
                 ${isOwner ? `
@@ -306,16 +306,21 @@ function renderDealsList(list) {
 }
 
 /* ---------- События ---------- */
+
+
+/* ---------- События ---------- */
 function bindEvents() {
-    document.querySelectorAll('.profile-tab-main').forEach(tab => {
+    // Обработчики для верхних вкладок (Товары, Покупки, Продажи)
+    document.querySelectorAll('.gs-segment').forEach(tab => {
         tab.onclick = () => {
             currentTab = tab.dataset.mainTab;
-            currentStatus = 'active';
-            renderProfile();
-            loadTabContent();
+            currentStatus = 'active'; // Сбрасываем на "Активные"
+            renderProfile(); // Перерисовываем шапку и вкладки
+            loadTabContent(); // Загружаем новые данные
         };
     });
 
+    // Обработчики для нижних вкладок (Активные, Завершенные)
     bindSubTabs();
 }
 
@@ -328,6 +333,7 @@ function bindSubTabs() {
         };
     });
 }
+
 
 /* ---------- Меню (шторка) ---------- */
 function initProfileMenu() {
@@ -345,7 +351,7 @@ function initProfileMenu() {
                 document.getElementById('menuEmail').textContent = me.email || '—';
                 const avatarEl = document.getElementById('menuAvatar');
                 if (me.avatar) {
-                    avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                    avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
                 } else {
                     avatarEl.innerHTML = me.username[0].toUpperCase();
                 }
@@ -354,6 +360,36 @@ function initProfileMenu() {
         menuClose.onclick = () => {
             menuOverlay.classList.remove('open');
             document.body.style.overflow = '';
+        };
+    }
+
+    // ЛОГИКА СМЕНЫ АВАТАРКИ
+    const avatarBtn = document.getElementById('menuChangeAvatar');
+    const avatarInput = document.getElementById('menuAvatarInput');
+    
+    if (avatarBtn && avatarInput) {
+        avatarBtn.onclick = () => avatarInput.click();
+        
+        avatarInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const fd = new FormData();
+            fd.append('avatar', file);
+
+            try {
+                const res = await fetch('/api/users/me/avatar', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` },
+                    body: fd
+                });
+                if (!res.ok) throw new Error('Ошибка загрузки');
+                
+                showToast('Аватар обновлен!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) {
+                showToast('Не удалось загрузить аватар', 'error');
+            }
         };
     }
 

@@ -2732,6 +2732,7 @@ textarea.sell-input {
 
 .tab-count {
     background: rgba(255,255,255,0.1);
+    color: #fff; /* <-- ВОТ ЭТА СТРОЧКА ДЕЛАЕТ ЦИФРУ БЕЛОЙ */
     padding: 2px 7px;
     border-radius: 10px;
     font-size: 11px;

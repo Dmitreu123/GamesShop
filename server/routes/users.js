@@ -159,14 +159,15 @@ router.get('/:username/products', (req, res) => {
   const status = req.query.status || 'active';
 
   let rows;
-  if (status === 'active') {
+if (status === 'active') {
     rows = db.prepare(`
-      SELECT p.*,
-             (SELECT url FROM product_images WHERE product_id = p.id ORDER BY id LIMIT 1) AS image
-      FROM products p
-      WHERE p.seller_id = ? AND p.status = 'active'
-      ORDER BY p.created_at DESC
+        SELECT p.*, 
+               (SELECT url FROM product_images WHERE product_id = p.id LIMIT 1) AS image 
+        FROM products p 
+        WHERE p.seller_id = ? AND p.status = 'active' 
+        ORDER BY p.created_at DESC
     `).all(user.id);
+}
   } else {
     rows = db.prepare(`
       SELECT d.id AS deal_id, d.amount, d.status AS deal_status, d.created_at,
