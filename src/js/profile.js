@@ -102,41 +102,57 @@ function renderProfile() {
     });
 
     const roundedRating = Math.round(profileUser.rating || 0);
+// Считаем звезды рейтинга
+const roundedRating = Math.round(profileUser.rating || 0);
+const starsHTML = '★'.repeat(roundedRating) + '☆'.repeat(5 - roundedRating);
 
 main.innerHTML = `
   <div class="container profile-page" style="padding-top: 20px;">
     
-    <!-- НОВЫЙ БЛОК БАЛАНСА -->
-<!-- НОВАЯ КАРТОЧКА ПРОФИЛЯ -->
-<div class="my-profile-header" style="display: flex; align-items: flex-start; gap: 15px; position: relative; background: #1a1a1a; padding: 20px; border-radius: 16px; border: 1px solid #2a2a2a; margin-bottom: 24px;">
-    
-    <!-- Аватарка -->
-    <div class="my-avatar" style="width: 70px; height: 70px; flex-shrink: 0; font-size: 28px; border: 2px solid #333;">
-        ${avatarHTML}
+    <!-- БЛОК БАЛАНСА (вернули на место) -->
+    <a href="/dashboard.html" class="my-balance-card" style="display: flex; align-items: center; background: linear-gradient(135deg, #1e1e1e, #151515); border: 1px solid #333; border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; text-decoration: none; transition: 0.2s;">
+        <div class="balance-icon-wrap" style="width: 44px; height: 44px; background: rgba(33, 150, 243, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; margin-right: 15px;">
+            <i class="fas fa-wallet"></i>
+        </div>
+        <div class="balance-info" style="flex: 1;">
+            <div class="balance-label" style="color: #888; font-size: 13px; margin-bottom: 2px;">Мой баланс</div>
+            <div class="balance-value" style="color: #fff; font-size: 22px; font-weight: 700;">${formatPrice(profileUser.balance || 0)}</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: #666;"></i>
+    </a>
+
+    <!-- НОВАЯ КАРТОЧКА ПРОФИЛЯ -->
+    <div class="my-profile-header" style="display: flex; align-items: flex-start; gap: 15px; position: relative; background: #1a1a1a; padding: 20px; border-radius: 16px; border: 1px solid #2a2a2a; margin-bottom: 24px;">
+        
+        <!-- Аватарка -->
+        <div class="my-avatar" style="width: 70px; height: 70px; flex-shrink: 0; font-size: 28px; border: 2px solid #333;">
+            ${avatarHTML}
+        </div>
+
+        <!-- Информация -->
+        <div class="my-info" style="flex: 1; min-width: 0; padding-right: 30px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                <h1 style="margin: 0; font-size: 20px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(profileUser.username)}</h1>
+                ${profileUser.role === 'moderator' ? '<span style="font-size:10px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Модер</span>' : ''}
+                ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span style="font-size:10px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Админ</span>' : ''}
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #fff; margin-bottom: 6px;">
+                <span style="color: #ffc107; letter-spacing: 2px;">${starsHTML}</span> <!-- ВОТ ТУТ ТЕПЕРЬ 5 ЗВЕЗД -->
+                <b>${(profileUser.rating || 0).toFixed(1)}</b>
+                <a href="/reviews.html?user=${profileUser.username}" style="color: var(--primary); text-decoration: none; margin-left: 4px;">${profileUser.reviews_count || 0} отзывов</a>
+            </div>
+            
+            <div style="color: #888; font-size: 13px;">На Games Shop с ${memberSince}</div>
+        </div>
+
+        <!-- Кнопка настроек (шестеренка) -->
+        <button onclick="document.getElementById('profileMenuBtn').click()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #666; font-size: 20px; cursor: pointer;">
+            <i class="fas fa-cog"></i>
+        </button>
     </div>
 
-    <!-- Информация -->
-    <div class="my-info" style="flex: 1; min-width: 0; padding-right: 30px;">
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
-            <h1 style="margin: 0; font-size: 20px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(profileUser.username)}</h1>
-            ${profileUser.role === 'moderator' ? '<span style="font-size:10px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Модер</span>' : ''}
-            ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span style="font-size:10px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Админ</span>' : ''}
-        </div>
-        
-        <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #fff; margin-bottom: 6px;">
-            <span style="color: #ffc107;">★</span> 
-            <b>${(profileUser.rating || 0).toFixed(1)}</b>
-            <a href="/reviews.html?user=${profileUser.username}" style="color: var(--primary); text-decoration: none; margin-left: 4px;">${profileUser.reviews_count || 0} отзывов</a>
-        </div>
-        
-        <div style="color: #888; font-size: 13px;">На Games Shop с ${memberSince}</div>
-    </div>
-
-    <!-- Кнопка настроек (шестеренка) -->
-    <button onclick="document.getElementById('profileMenuBtn').click()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #666; font-size: 20px; cursor: pointer;">
-        <i class="fas fa-cog"></i>
-    </button>
-</div>
+    <!-- ВКЛАДКИ -->
 
     <!-- ВКЛАДКИ (Оставили как было, но стилизуем через CSS) -->
     <div class="profile-tabs-main">
