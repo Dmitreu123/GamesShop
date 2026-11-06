@@ -58,6 +58,15 @@ const res = await fetch(`/api/users/${username}/profile`, {
 if (isOwner) {
     localStorage.setItem('games_shop_role', profileUser.role || 'user');
 }
+// Добавляем кнопку Админки в шапку
+const headerAdminBtn = document.getElementById('headerAdminBtn');
+if (headerAdminBtn) {
+    if (isOwner && (profileUser.role === 'admin' || profileUser.role === 'moderator' || profileUser.email === 'admin@games.shop')) {
+        headerAdminBtn.innerHTML = `<a href="/admin.html" style="color: #ff2e63; font-size: 22px; text-decoration: none;" title="Админ-панель"><i class="fas fa-shield-alt"></i></a>`;
+    } else {
+        headerAdminBtn.innerHTML = '';
+    }
+}
 
         renderProfile();
         loadTabContent();
@@ -98,65 +107,36 @@ main.innerHTML = `
   <div class="container profile-page" style="padding-top: 20px;">
     
     <!-- НОВЫЙ БЛОК БАЛАНСА -->
-    <a href="/dashboard.html" class="my-balance-card">
-        <div class="balance-icon-wrap">
-            <i class="fas fa-wallet"></i>
-        </div>
-        <div class="balance-info">
-            <div class="balance-label">Мой баланс</div>
-            <div class="balance-value">${formatPrice(profileUser.balance || 0)}</div>
-        </div>
-        <i class="fas fa-chevron-right" style="color: #666;"></i>
-    </a>
+<!-- НОВАЯ КАРТОЧКА ПРОФИЛЯ -->
+<div class="my-profile-header" style="display: flex; align-items: flex-start; gap: 15px; position: relative; background: #1a1a1a; padding: 20px; border-radius: 16px; border: 1px solid #2a2a2a; margin-bottom: 24px;">
+    
+    <!-- Аватарка -->
+    <div class="my-avatar" style="width: 70px; height: 70px; flex-shrink: 0; font-size: 28px; border: 2px solid #333;">
+        ${avatarHTML}
+    </div>
 
-    <!-- НОВАЯ КАРТОЧКА ПРОФИЛЯ -->
-    <div class="my-profile-header">
-        <div class="my-avatar">
-            ${avatarHTML}
-        </div>
-        <div class="my-info">
-<!-- Имя и Шестеренка -->
-<div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
-    <div style="display: flex; flex-direction: column; overflow: hidden; width: 100%;">
-        
-        <!-- Ник и бейджи -->
-        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <h1 class="my-username" style="margin: 0; font-size: 22px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHTML(profileUser.username)}</h1>
-            
+    <!-- Информация -->
+    <div class="my-info" style="flex: 1; min-width: 0; padding-right: 30px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+            <h1 style="margin: 0; font-size: 20px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(profileUser.username)}</h1>
             ${profileUser.role === 'moderator' ? '<span style="font-size:10px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Модер</span>' : ''}
             ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span style="font-size:10px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Админ</span>' : ''}
         </div>
         
-        <!-- Рейтинг и Дата -->
-        <div class="my-rating" style="margin-top: 6px; margin-bottom: 4px;">
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #fff; margin-bottom: 6px;">
             <span style="color: #ffc107;">★</span> 
             <b>${(profileUser.rating || 0).toFixed(1)}</b>
-            <a href="/reviews.html?user=${profileUser.username}" class="my-reviews-link">${profileUser.reviews_count || 0} отзывов</a>
+            <a href="/reviews.html?user=${profileUser.username}" style="color: var(--primary); text-decoration: none; margin-left: 4px;">${profileUser.reviews_count || 0} отзывов</a>
         </div>
-        <div class="my-join-date">На Games Shop с ${memberSince}</div>
+        
+        <div style="color: #888; font-size: 13px;">На Games Shop с ${memberSince}</div>
     </div>
 
-    <!-- Шестеренка (настройки) -->
-    <button class="my-settings-btn" onclick="document.getElementById('profileMenuBtn').click()" style="flex-shrink: 0; margin-top: -5px;">
+    <!-- Кнопка настроек (шестеренка) -->
+    <button onclick="document.getElementById('profileMenuBtn').click()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #666; font-size: 20px; cursor: pointer;">
         <i class="fas fa-cog"></i>
     </button>
 </div>
-
-<!-- Кнопка Админки (отдельным блоком) -->
-${(profileUser.role === 'admin' || profileUser.role === 'moderator' || profileUser.email === 'admin@games.shop') ? `
-    <a href="/admin.html" style="background: linear-gradient(135deg, #ff2e63, #ff6b3d); color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; width: 100%; box-sizing: border-box;">
-        <i class="fas fa-shield-alt"></i> Перейти в Админ-панель
-    </a>
-` : ''}
-
-            <div class="my-rating">
-                <span style="color: #ffc107;">★</span> 
-                <b>${(profileUser.rating || 0).toFixed(1)}</b>
-                <a href="/reviews.html?user=${profileUser.username}" class="my-reviews-link">${profileUser.reviews_count || 0} отзывов</a>
-            </div>
-            <div class="my-join-date">На Games Shop с ${memberSince}</div>
-        </div>
-    </div>
 
     <!-- ВКЛАДКИ (Оставили как было, но стилизуем через CSS) -->
     <div class="profile-tabs-main">
