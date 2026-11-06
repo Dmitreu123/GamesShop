@@ -5312,3 +5312,183 @@ body.chat-page-body {
     object-fit: contain !important;
     border-radius: 8px !important;
 }
+
+/* =========================================
+   НОВЫЙ УНИКАЛЬНЫЙ СТИЛЬ ПРОФИЛЯ GAMES SHOP
+   ========================================= */
+
+/* Карточка баланса */
+.my-balance-card {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #1e1e1e, #151515);
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+.my-balance-card:hover {
+    border-color: var(--primary);
+}
+.balance-icon-wrap {
+    width: 44px;
+    height: 44px;
+    background: rgba(33, 150, 243, 0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 20px;
+    margin-right: 15px;
+}
+.balance-info {
+    flex: 1;
+}
+.balance-label {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+.balance-value {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* Карточка профиля */
+.my-profile-header {
+    display: flex;
+    align-items: center;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    position: relative;
+}
+.my-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    margin-right: 20px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 2px solid #333;
+}
+.my-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.my-info {
+    flex: 1;
+    min-width: 0;
+}
+.my-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+.my-username {
+    margin: 0;
+    font-size: 22px;
+    color: #fff;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.my-settings-btn {
+    background: transparent;
+    border: none;
+    color: #666;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+}
+.my-settings-btn:hover {
+    color: #fff;
+}
+.my-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 6px;
+}
+.my-reviews-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 13px;
+    margin-left: 4px;
+}
+.my-join-date {
+    color: #888;
+    font-size: 13px;
+}
+
+/* Вкладки */
+.profile-tabs-main {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+.profile-tab-main {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 12px;
+    cursor: pointer;
+    position: relative;
+    transition: 0.2s;
+}
+.profile-tab-main:hover {
+    color: #fff;
+}
+.profile-tab-main.active {
+    color: #fff;
+}
+.profile-tab-main.active::after {
+    content: '';
+    position: absolute;
+    bottom: -11px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+/* Сетка товаров (чтобы не была как у Playerok - чуть более прямоугольная) */
+.profile-products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+.profile-product-card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px; /* Меньше скругление, чем у Playerok */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.profile-product-image {
+    aspect-ratio: 4/3; /* Чуть более вытянутые фото */
+}

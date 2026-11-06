@@ -94,68 +94,59 @@ function renderProfile() {
 
     const roundedRating = Math.round(profileUser.rating || 0);
 
-    main.innerHTML = `
-        <div class="container profile-page">
-            ${isOwner ? `
-                <a href="/dashboard.html" class="profile-balance-card">
-                    <span class="balance-icon">💰</span>
-                    <span class="balance-value">${formatPrice(profileUser.balance || 0)}</span>
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            ` : ''}
-
-
-<div class="profile-header-card" style="position: relative;">
+main.innerHTML = `
+  <div class="container profile-page" style="padding-top: 20px;">
     
-${(isOwner && (profileUser.role === 'admin' || profileUser.role === 'moderator' || profileUser.email === 'admin@games.shop')) ? `
-<a href="/admin.html" style="position:absolute; right:10px; top:10px; background:linear-gradient(135deg, #ff2e63, #ff6b3d); color:white; padding:4px 8px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold; display:flex; align-items:center; gap:4px; z-index:10; box-shadow:0 2px 6px rgba(255,46,99,0.3);">
-    <i class="fas fa-shield-alt" style="font-size: 10px;"></i> Админка
-</a>
+    <!-- НОВЫЙ БЛОК БАЛАНСА -->
+    <a href="/dashboard.html" class="my-balance-card">
+        <div class="balance-icon-wrap">
+            <i class="fas fa-wallet"></i>
+        </div>
+        <div class="balance-info">
+            <div class="balance-label">Мой баланс</div>
+            <div class="balance-value">${formatPrice(profileUser.balance || 0)}</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: #666;"></i>
+    </a>
 
-    ` : ''}
-
-    <div class="profile-avatar">
-        ${avatarHTML}
+    <!-- НОВАЯ КАРТОЧКА ПРОФИЛЯ -->
+    <div class="my-profile-header">
+        <div class="my-avatar">
+            ${avatarHTML}
+        </div>
+        <div class="my-info">
+            <div class="my-name-row">
+                <h1 class="my-username">${escapeHTML(profileUser.username)}</h1>
+                <button class="my-settings-btn" onclick="document.getElementById('profileMenuBtn').click()">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+            <div class="my-rating">
+                <span style="color: #ffc107;">★</span> 
+                <b>${(profileUser.rating || 0).toFixed(1)}</b>
+                <a href="/reviews.html?user=${profileUser.username}" class="my-reviews-link">${profileUser.reviews_count || 0} отзывов</a>
+            </div>
+            <div class="my-join-date">На Games Shop с ${memberSince}</div>
+        </div>
     </div>
-    <div class="profile-info">
-<h1 class="profile-username">
-    ${escapeHTML(profileUser.username)}
-    ${profileUser.role === 'moderator' ? '<span style="font-size:12px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">Модератор</span>' : ''}
-    ${profileUser.role === 'admin' ? '<span style="font-size:12px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px; vertical-align:middle;">Админ</span>' : ''}
-</h1>
-        <div class="profile-rating">
-<span class="profile-stars" style="color: #ffc107;">${'★'.repeat(roundedRating)}${'☆'.repeat(5 - roundedRating)}</span>
-            <b>${(profileUser.rating || 0).toFixed(1)}</b>
-<a href="/reviews.html?user=${profileUser.username}" class="profile-reviews-count" style="color: var(--primary); text-decoration: none; font-weight: 600;">${profileUser.reviews_count || 0} отзывов</a>
-        </div>
-        <div class="profile-member-since">
-            На Games Shop с ${memberSince}
+
+    <!-- ВКЛАДКИ (Оставили как было, но стилизуем через CSS) -->
+    <div class="profile-tabs-main">
+        <button class="profile-tab-main ${currentTab === 'products' ? 'active' : ''}" data-main-tab="products">Товары</button>
+        <button class="profile-tab-main ${currentTab === 'purchases' ? 'active' : ''}" data-main-tab="purchases">Покупки</button>
+        <button class="profile-tab-main ${currentTab === 'sales' ? 'active' : ''}" data-main-tab="sales">Продажи</button>
+    </div>
+
+    <div class="profile-tabs-sub" id="subTabs">
+        ${renderSubTabs()}
+    </div>
+
+    <div class="profile-content" id="profileContent">
+        <div style="text-align:center;padding:40px 0;color:var(--text-dim);">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>
         </div>
     </div>
-</div>
-
-            <div class="profile-tabs-main">
-                <button class="profile-tab-main ${currentTab === 'products' ? 'active' : ''}" data-main-tab="products">
-                    Мои товары
-                </button>
-                <button class="profile-tab-main ${currentTab === 'purchases' ? 'active' : ''}" data-main-tab="purchases">
-                    Покупки
-                </button>
-                <button class="profile-tab-main ${currentTab === 'sales' ? 'active' : ''}" data-main-tab="sales">
-                    Продажи
-                </button>
-            </div>
-
-            <div class="profile-tabs-sub" id="subTabs">
-                ${renderSubTabs()}
-            </div>
-
-            <div class="profile-content" id="profileContent">
-                <div style="text-align:center;padding:40px 0;color:var(--text-dim);">
-                    <i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>
-                </div>
-            </div>
-        </div>
+  </div>
     `;
 
     bindEvents();
