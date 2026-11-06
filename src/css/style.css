@@ -5642,3 +5642,115 @@ body.chat-page-body {
 .profile-menu-logout:hover {
     background: rgba(255, 59, 48, 0.1);
 }
+
+
+/* =========================================
+   УНИКАЛЬНЫЙ ДИЗАЙН ПРОФИЛЯ (GAMES SHOP)
+   ========================================= */
+
+/* Обложка */
+.gs-profile-cover {
+    position: relative;
+    height: 140px;
+    width: 100%;
+    background: #1a1a1a;
+    overflow: visible;
+    margin-bottom: 30px;
+}
+.gs-cover-gradient {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(179, 0, 255, 0.2));
+}
+.gs-avatar-box {
+    position: absolute;
+    bottom: -30px;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    background: #121212;
+    border: 3px solid #121212;
+    border-radius: 16px; /* Квадратный аватар */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* Бейджи */
+.gs-badge {
+    font-size: 10px;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Пилюли (Статистика и Баланс) */
+.gs-stat-pill {
+    display: flex;
+    align-items: center;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+/* Сегментированные вкладки (iOS Style) */
+.gs-segmented-control {
+    display: flex;
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.gs-segment {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.gs-segment.active {
+    background: #2a2a2a;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Подтабы (Активные / Завершенные) */
+.profile-tab-sub {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+.profile-tab-sub.active {
+    background: rgba(33, 150, 243, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.profile-tab-sub .tab-count {
+    background: #2a2a2a;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    margin-left: 5px;
+}

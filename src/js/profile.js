@@ -78,12 +78,11 @@ function renderError(msg) {
     `;
 }
 
-/* ---------- Рендер профиля ---------- */
 function renderProfile() {
     const main = document.getElementById('profileMain');
     
     const avatarHTML = profileUser.avatar
-        ? `<img src="${profileUser.avatar}" alt="" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`
+        ? `<img src="${profileUser.avatar}" alt="" style="width: 100%; height: 100%; object-fit: cover;">`
         : escapeHTML(profileUser.username[0].toUpperCase());
 
     const memberSince = new Date(profileUser.created_at).toLocaleDateString('ru-RU', {
@@ -94,64 +93,68 @@ function renderProfile() {
     const starsHTML = '★'.repeat(roundedRating) + '☆'.repeat(5 - roundedRating);
 
     main.innerHTML = `
-      <div class="container profile-page" style="padding-top: 20px;">
+      <div class="container" style="padding: 0; padding-bottom: 80px;">
         
-        <!-- БЛОК БАЛАНСА -->
-        ${isOwner ? `
-        <a href="/dashboard.html" class="my-balance-card" style="display: flex; align-items: center; background: linear-gradient(135deg, #1e1e1e, #151515); border: 1px solid #333; border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; text-decoration: none; transition: 0.2s;">
-            <div class="balance-icon-wrap" style="width: 44px; height: 44px; background: rgba(33, 150, 243, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; margin-right: 15px;">
-                <i class="fas fa-wallet"></i>
-            </div>
-            <div class="balance-info" style="flex: 1;">
-                <div class="balance-label" style="color: #888; font-size: 13px; margin-bottom: 2px;">Мой баланс</div>
-                <div class="balance-value" style="color: #fff; font-size: 22px; font-weight: 700;">${formatPrice(profileUser.balance || 0)}</div>
-            </div>
-            <i class="fas fa-chevron-right" style="color: #666;"></i>
-        </a>
-        ` : ''}
-
-        <!-- КАРТОЧКА ПРОФИЛЯ -->
-        <div class="my-profile-header" style="display: flex; align-items: flex-start; gap: 15px; position: relative; background: #1a1a1a; padding: 20px; border-radius: 16px; border: 1px solid #2a2a2a; margin-bottom: 24px;">
-            
-            <div class="my-avatar" style="width: 70px; height: 70px; flex-shrink: 0; font-size: 28px; border: 2px solid #333; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; overflow: hidden;">
+        <!-- ОБЛОЖКА И АВАТАР -->
+        <div class="gs-profile-cover">
+            <div class="gs-cover-gradient"></div>
+            <div class="gs-avatar-box">
                 ${avatarHTML}
             </div>
+        </div>
 
-            <div class="my-info" style="flex: 1; min-width: 0; padding-right: 30px;">
-                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
-                    <h1 style="margin: 0; font-size: 20px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(profileUser.username)}</h1>
-                    ${profileUser.role === 'moderator' ? '<span style="font-size:10px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Модер</span>' : ''}
-                    ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span style="font-size:10px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Админ</span>' : ''}
+        <div style="padding: 0 20px;">
+            <!-- ИМЯ И СТАТУС -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <h1 style="margin: 0; font-size: 24px; color: #fff;">${escapeHTML(profileUser.username)}</h1>
+                        ${profileUser.role === 'moderator' ? '<span class="gs-badge" style="background: #ff9800;">Модератор</span>' : ''}
+                        ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span class="gs-badge" style="background: #f44336;">Админ</span>' : ''}
+                    </div>
+                    <div style="color: #888; font-size: 13px; margin-top: 4px;">На сайте с ${memberSince}</div>
                 </div>
-                
-                <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #fff; margin-bottom: 6px;">
-                    <span style="color: #ffc107; letter-spacing: 2px;">${starsHTML}</span>
-                    <b>${(profileUser.rating || 0).toFixed(1)}</b>
-                    <a href="/reviews.html?user=${profileUser.username}" style="color: var(--primary); text-decoration: none; margin-left: 4px;">${profileUser.reviews_count || 0} отзывов</a>
-                </div>
-                
-                <div style="color: #888; font-size: 13px;">На Games Shop с ${memberSince}</div>
+                <button onclick="document.getElementById('profileMenuBtn').click()" style="background: #1e1e1e; border: 1px solid #333; color: #fff; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <i class="fas fa-cog"></i>
+                </button>
             </div>
 
-            <button onclick="document.getElementById('profileMenuBtn').click()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #666; font-size: 20px; cursor: pointer;">
-                <i class="fas fa-cog"></i>
-            </button>
-        </div>
+            <!-- СТАТИСТИКА И БАЛАНС (Пилюли) -->
+            <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                
+                <!-- Рейтинг -->
+                <div class="gs-stat-pill">
+                    <span style="color: #ffc107; letter-spacing: 1px;">${starsHTML}</span>
+                    <b style="color: #fff; margin-left: 5px;">${(profileUser.rating || 0).toFixed(1)}</b>
+                    <a href="/reviews.html?user=${profileUser.username}" style="color: #888; text-decoration: none; font-size: 12px; margin-left: 5px;">(${profileUser.reviews_count || 0})</a>
+                </div>
 
-        <!-- ВКЛАДКИ -->
-        <div class="profile-tabs-main" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">
-            <button class="profile-tab-main ${currentTab === 'products' ? 'active' : ''}" data-main-tab="products" style="background: transparent; border: none; color: ${currentTab === 'products' ? '#fff' : '#888'}; font-size: 16px; font-weight: 500; padding: 8px 12px; cursor: pointer; position: relative;">Товары</button>
-            <button class="profile-tab-main ${currentTab === 'purchases' ? 'active' : ''}" data-main-tab="purchases" style="background: transparent; border: none; color: ${currentTab === 'purchases' ? '#fff' : '#888'}; font-size: 16px; font-weight: 500; padding: 8px 12px; cursor: pointer; position: relative;">Покупки</button>
-            <button class="profile-tab-main ${currentTab === 'sales' ? 'active' : ''}" data-main-tab="sales" style="background: transparent; border: none; color: ${currentTab === 'sales' ? '#fff' : '#888'}; font-size: 16px; font-weight: 500; padding: 8px 12px; cursor: pointer; position: relative;">Продажи</button>
-        </div>
+                <!-- Баланс (только для владельца) -->
+                ${isOwner ? `
+                <a href="/dashboard.html" class="gs-stat-pill" style="text-decoration: none; border-color: rgba(0, 229, 255, 0.3); background: rgba(0, 229, 255, 0.05);">
+                    <i class="fas fa-wallet" style="color: #00e5ff;"></i>
+                    <b style="color: #00e5ff; margin-left: 6px;">${formatPrice(profileUser.balance || 0)}</b>
+                </a>
+                ` : ''}
+            </div>
 
-        <div class="profile-tabs-sub" id="subTabs">
-            ${renderSubTabs()}
-        </div>
+            <!-- СЕГМЕНТИРОВАННЫЕ ВКЛАДКИ (Как в iOS) -->
+            <div class="gs-segmented-control" style="margin-top: 25px;">
+                <button class="gs-segment ${currentTab === 'products' ? 'active' : ''}" data-main-tab="products">Товары</button>
+                <button class="gs-segment ${currentTab === 'purchases' ? 'active' : ''}" data-main-tab="purchases">Покупки</button>
+                <button class="gs-segment ${currentTab === 'sales' ? 'active' : ''}" data-main-tab="sales">Продажи</button>
+            </div>
 
-        <div class="profile-content" id="profileContent">
-            <div style="text-align:center;padding:40px 0;color:var(--text-dim);">
-                <i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>
+            <!-- ПОДТАБЫ (Активные / Завершенные) -->
+            <div class="profile-tabs-sub" id="subTabs" style="margin-top: 15px; display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;">
+                ${renderSubTabs()}
+            </div>
+
+            <!-- КОНТЕНТ -->
+            <div class="profile-content" id="profileContent" style="margin-top: 15px;">
+                <div style="text-align:center;padding:40px 0;color:var(--text-dim);">
+                    <i class="fas fa-spinner fa-spin" style="font-size:24px;"></i>
+                </div>
             </div>
         </div>
       </div>
