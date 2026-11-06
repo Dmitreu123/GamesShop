@@ -115,26 +115,40 @@ main.innerHTML = `
             ${avatarHTML}
         </div>
         <div class="my-info">
-<div class="my-name-row">
-    <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
-        <h1 class="my-username">${escapeHTML(profileUser.username)}</h1>
+<!-- Имя и Шестеренка -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+    <div style="display: flex; flex-direction: column; overflow: hidden; width: 100%;">
         
-        ${profileUser.role === 'moderator' ? '<span style="font-size:12px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Модератор</span>' : ''}
-        ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span style="font-size:12px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Админ</span>' : ''}
+        <!-- Ник и бейджи -->
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <h1 class="my-username" style="margin: 0; font-size: 22px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHTML(profileUser.username)}</h1>
+            
+            ${profileUser.role === 'moderator' ? '<span style="font-size:10px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Модер</span>' : ''}
+            ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span style="font-size:10px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Админ</span>' : ''}
+        </div>
+        
+        <!-- Рейтинг и Дата -->
+        <div class="my-rating" style="margin-top: 6px; margin-bottom: 4px;">
+            <span style="color: #ffc107;">★</span> 
+            <b>${(profileUser.rating || 0).toFixed(1)}</b>
+            <a href="/reviews.html?user=${profileUser.username}" class="my-reviews-link">${profileUser.reviews_count || 0} отзывов</a>
+        </div>
+        <div class="my-join-date">На Games Shop с ${memberSince}</div>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
-        ${(profileUser.role === 'admin' || profileUser.role === 'moderator' || profileUser.email === 'admin@games.shop') ? `
-            <a href="/admin.html" style="background: linear-gradient(135deg, #ff2e63, #ff6b3d); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
-                <i class="fas fa-shield-alt"></i> Админка
-            </a>
-        ` : ''}
-        
-        <button class="my-settings-btn" onclick="document.getElementById('profileMenuBtn').click()">
-            <i class="fas fa-cog"></i>
-        </button>
-    </div>
+    <!-- Шестеренка (настройки) -->
+    <button class="my-settings-btn" onclick="document.getElementById('profileMenuBtn').click()" style="flex-shrink: 0; margin-top: -5px;">
+        <i class="fas fa-cog"></i>
+    </button>
 </div>
+
+<!-- Кнопка Админки (отдельным блоком) -->
+${(profileUser.role === 'admin' || profileUser.role === 'moderator' || profileUser.email === 'admin@games.shop') ? `
+    <a href="/admin.html" style="background: linear-gradient(135deg, #ff2e63, #ff6b3d); color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; width: 100%; box-sizing: border-box;">
+        <i class="fas fa-shield-alt"></i> Перейти в Админ-панель
+    </a>
+` : ''}
+
             <div class="my-rating">
                 <span style="color: #ffc107;">★</span> 
                 <b>${(profileUser.rating || 0).toFixed(1)}</b>
