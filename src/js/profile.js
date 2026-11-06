@@ -115,12 +115,26 @@ main.innerHTML = `
             ${avatarHTML}
         </div>
         <div class="my-info">
-            <div class="my-name-row">
-                <h1 class="my-username">${escapeHTML(profileUser.username)}</h1>
-                <button class="my-settings-btn" onclick="document.getElementById('profileMenuBtn').click()">
-                    <i class="fas fa-cog"></i>
-                </button>
-            </div>
+<div class="my-name-row">
+    <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+        <h1 class="my-username">${escapeHTML(profileUser.username)}</h1>
+        
+        ${profileUser.role === 'moderator' ? '<span style="font-size:12px; background:#ff9800; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Модератор</span>' : ''}
+        ${profileUser.role === 'admin' || profileUser.email === 'admin@games.shop' ? '<span style="font-size:12px; background:#f44336; color:#fff; padding:2px 6px; border-radius:4px; white-space:nowrap;">Админ</span>' : ''}
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+        ${(profileUser.role === 'admin' || profileUser.role === 'moderator' || profileUser.email === 'admin@games.shop') ? `
+            <a href="/admin.html" style="background: linear-gradient(135deg, #ff2e63, #ff6b3d); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                <i class="fas fa-shield-alt"></i> Админка
+            </a>
+        ` : ''}
+        
+        <button class="my-settings-btn" onclick="document.getElementById('profileMenuBtn').click()">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+</div>
             <div class="my-rating">
                 <span style="color: #ffc107;">★</span> 
                 <b>${(profileUser.rating || 0).toFixed(1)}</b>
