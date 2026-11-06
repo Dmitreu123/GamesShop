@@ -5492,3 +5492,153 @@ body.chat-page-body {
 .profile-product-image {
     aspect-ratio: 4/3; /* Чуть более вытянутые фото */
 }
+
+
+/* =========================================
+   НОВЫЙ СТИЛЬ КОШЕЛЬКА (GAMES SHOP)
+   ========================================= */
+.wallet-tabs {
+    display: flex;
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+.wallet-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: #888;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.wallet-tab.active {
+    background: #2a2a2a; /* Вместо ярко-синего */
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Карточка баланса */
+.balance-card {
+    background: linear-gradient(145deg, #1f1f1f, #141414);
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.wallet-icon-box {
+    width: 56px;
+    height: 56px;
+    background: rgba(0, 229, 255, 0.1); /* Бирюзовый неон */
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #00e5ff;
+    margin-right: 20px;
+}
+.wallet-icon-box.purple {
+    background: rgba(179, 0, 255, 0.1);
+    border-color: rgba(179, 0, 255, 0.2);
+    color: #b300ff;
+}
+.balance-amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 4px;
+}
+.balance-label {
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Кнопки */
+.btn-primary-gs {
+    background: #00e5ff;
+    color: #000;
+    font-weight: 700;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-primary-gs:hover {
+    background: #00c4db;
+}
+
+
+
+/* =========================================
+   СТИЛЬНЫЕ ПЕРЕКЛЮЧАТЕЛИ (GAMES SHOP)
+   ========================================= */
+.gs-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+}
+.gs-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.gs-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #333;
+    transition: .3s;
+    border-radius: 26px;
+}
+.gs-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #888;
+    transition: .3s;
+    border-radius: 50%;
+}
+.gs-switch input:checked + .gs-slider {
+    background-color: #00e5ff; /* Бирюзовый неон */
+}
+.gs-switch input:checked + .gs-slider:before {
+    transform: translateX(20px);
+    background-color: #000;
+}
+
+/* Кнопка выхода (делаем аккуратнее) */
+.profile-menu-logout {
+    background: transparent;
+    color: #ff3b30;
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.profile-menu-logout:hover {
+    background: rgba(255, 59, 48, 0.1);
+}
