@@ -154,29 +154,26 @@ router.get('/:username/profile', authOptional, (req, res) => {
 
 router.get('/:username/products', (req, res) => {
   const user = usersRepo.findByUsername(req.params.username);
-  if (!user) return res.status(404).json({ error: 'Не найден' });
+  if (!user) return res.status(404).json({ error: 'Пользователь не найден' });
 
   const status = req.query.status || 'active';
 
   let rows;
-if (status === 'active') {
+  if (status === 'active') {
     rows = db.prepare(`
-        SELECT p.*, 
-               (SELECT url FROM product_images WHERE product_id = p.id LIMIT 1) AS image 
-        FROM products p 
-        WHERE p.seller_id = ? AND p.status = 'active' 
-        ORDER BY p.created_at DESC
+      SELECT p.*, 
+             (SELECT url FROM product_images WHERE product_id = p.id LIMIT 1) AS image 
+      FROM products p 
+      WHERE p.seller_id = ? AND p.status = 'active' 
+      ORDER BY p.created_at DESC
     `).all(user.id);
-}
   } else {
     rows = db.prepare(`
-      SELECT d.id AS deal_id, d.amount, d.status AS deal_status, d.created_at,
-             p.title, p.game, p.category, p.id AS product_id,
-             (SELECT url FROM product_images WHERE product_id = p.id ORDER BY id LIMIT 1) AS image
-      FROM deals d
-      JOIN products p ON p.id = d.product_id
-      WHERE d.seller_id = ? AND d.status = 'completed'
-      ORDER BY d.created_at DESC
+      SELECT p.*, 
+             (SELECT url FROM product_images WHERE product_id = p.id LIMIT 1) AS image 
+      FROM products p 
+      WHERE p.seller_id = ? AND p.status = 'sold' 
+      ORDER BY p.created_at DESC
     `).all(user.id);
   }
 
