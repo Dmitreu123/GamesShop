@@ -5755,3 +5755,17 @@ body.chat-page-body {
     font-size: 11px;
     margin-left: 5px;
 }
+
+/* Красивая шторка меню */
+.profile-menu-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: none;
+    justify-content: flex-end; /* Выезжает справа */
+}
+.profile-menu-overlay.open {
+    display: flex;
+}

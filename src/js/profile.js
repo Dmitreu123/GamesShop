@@ -342,26 +342,23 @@ function initProfileMenu() {
     const menuClose = document.getElementById('profileMenuClose');
 
     if (menuBtn && menuOverlay && menuClose) {
-        menuBtn.onclick = () => {
-            menuOverlay.classList.add('open');
-            document.body.style.overflow = 'hidden';
-            
-            const me = getUser();
-            if (me) {
-                document.getElementById('menuEmail').textContent = me.email || '—';
-                const avatarEl = document.getElementById('menuAvatar');
-                if (me.avatar) {
-                    avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
-                } else {
-                    avatarEl.innerHTML = me.username[0].toUpperCase();
-                }
-            }
-        };
-        menuClose.onclick = () => {
-            menuOverlay.classList.remove('open');
-            document.body.style.overflow = '';
-        };
+menuBtn.onclick = () => {
+    menuOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    
+    // Берем данные либо из профиля, либо из памяти
+    const me = getUser() || profileUser;
+    
+    if (me) {
+        document.getElementById('menuEmail').textContent = me.email || '—';
+        const avatarEl = document.getElementById('menuAvatar');
+        if (me.avatar) {
+            avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
+        } else {
+            avatarEl.innerHTML = me.username ? me.username[0].toUpperCase() : '?';
+        }
     }
+};
 
     // ЛОГИКА СМЕНЫ АВАТАРКИ
     const avatarBtn = document.getElementById('menuChangeAvatar');
