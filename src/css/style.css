@@ -3763,23 +3763,21 @@ body.chat-page-body {
     background: #2a3648;
 }
 
-/* ============ МЕНЮ (DRAWER) ============ */
 .profile-menu-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    display: none;
-    align-items: flex-start;
-    justify-content: flex-start;
-    opacity: 0;
-    transition: opacity 0.25s;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(4px) !important;
+    z-index: 99999 !important;
+    display: none; /* Убрали !important, чтобы JS мог менять */
+    justify-content: flex-end !important;
 }
 
 .profile-menu-overlay.open {
-    display: flex;
-    opacity: 1;
+    display: flex !important; /* При открытии принудительно flex */
 }
 
 .profile-menu-panel {
