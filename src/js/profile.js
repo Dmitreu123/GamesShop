@@ -343,7 +343,6 @@ function initProfileMenu() {
 
     if (menuBtn && menuOverlay && menuClose) {
         menuBtn.onclick = () => {
-            alert('Кнопка меню нажата!'); // <-- Проверка, что клик работает
             
             // Принудительно показываем меню через стили
             menuOverlay.style.display = 'flex'; 
