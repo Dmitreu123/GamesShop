@@ -342,23 +342,28 @@ function initProfileMenu() {
     const menuOverlay = document.getElementById('profileMenu');
     const menuClose = document.getElementById('profileMenuClose');
 
-    if (menuBtn && menuOverlay && menuClose) {
-        menuBtn.onclick = () => {
-            menuOverlay.style.display = 'flex'; // Открываем
-            document.body.style.overflow = 'hidden';
-            
-            // Подгружаем данные
-            const me = getUser() || profileUser;
-            if (me) {
-                document.getElementById('menuEmail').textContent = me.email || '—';
-            }
-        };
+if (menuBtn && menuOverlay && menuClose) {
+    menuBtn.onclick = () => {
+        menuOverlay.style.display = 'flex'; // Открываем
+        document.body.style.overflow = 'hidden';
         
-        menuClose.onclick = () => {
-            menuOverlay.style.display = 'none'; // Закрываем
-            document.body.style.overflow = '';
-        };
-    }
+        const me = getUser() || profileUser;
+        if (me) {
+            document.getElementById('menuEmail').textContent = me.email || '—';
+            const avatarEl = document.getElementById('menuAvatar');
+            if (me.avatar) {
+                avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
+            } else {
+                avatarEl.innerHTML = me.username ? me.username[0].toUpperCase() : '?';
+            }
+        }
+    };
+    
+    menuClose.onclick = () => {
+        menuOverlay.style.display = 'none'; // Закрываем
+        document.body.style.overflow = '';
+    };
+}
 
 
     // ЛОГИКА СМЕНЫ АВАТАРКИ
