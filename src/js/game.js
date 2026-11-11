@@ -9,7 +9,6 @@ if (!gameId) window.location.href = '/';
 
 let currentCategory = 'all';
 
-// 1. Загружаем информацию об игре и категориях
 async function loadGameData() {
     try {
         const res = await fetch(`/api/games/${gameId}/categories`);
@@ -17,9 +16,14 @@ async function loadGameData() {
 
         if (data.game) {
             document.getElementById('gameTitle').textContent = data.game.name;
+            const iconEl = document.getElementById('gameIcon');
+            if (data.game.icon && (data.game.icon.includes('http') || data.game.icon.startsWith('/'))) {
+                iconEl.innerHTML = `<img src="${data.game.icon}">`;
+            } else {
+                iconEl.innerHTML = `<i class="${data.game.icon || 'fas fa-gamepad'}" style="font-size: 32px; color: #00e5ff; display:flex; justify-content:center; align-items:center; height:100%;"></i>`;
+            }
         }
 
-        // Рисуем вкладки категорий (Все, Аккаунты, Валюта и т.д.)
         const catContainer = document.getElementById('gameCategories');
         const categories = data.categories || [];
         
@@ -34,7 +38,6 @@ async function loadGameData() {
     }
 }
 
-// 2. Загружаем товары этой игры
 async function loadProducts() {
     const grid = document.getElementById('gameProductsGrid');
     try {
@@ -50,12 +53,8 @@ async function loadProducts() {
             return;
         }
 
-        // Рисуем карточки (используем ту же логику, что и на главной)
         grid.innerHTML = products.map(p => `
             <a href="/product.html?id=${p.id}" class="product-card" style="text-decoration:none;">
-                <div class="product-badges-top">
-                    <span class="badge-game">${gameId.toUpperCase()}</span>
-                </div>
                 <div class="product-image-main">
                     ${p.images && p.images.length > 0 
                         ? `<img src="${p.images[0].url}" alt="">` 
@@ -74,7 +73,6 @@ async function loadProducts() {
     }
 }
 
-// Глобальная функция для фильтрации
 window.filterCategory = (catId, btn) => {
     currentCategory = catId;
     document.querySelectorAll('#gameCategories .gs-segment').forEach(b => b.classList.remove('active'));
@@ -82,6 +80,5 @@ window.filterCategory = (catId, btn) => {
     loadProducts();
 };
 
-// Запуск
 loadGameData();
 loadProducts();

@@ -96,7 +96,7 @@ function renderGamesStrip(games) {
 
     // ПРАВИЛЬНАЯ ГЕНЕРАЦИЯ HTML (добавлена обертка с data-game)
 strip.innerHTML = sorted.map(g => `
-    <div class="game-strip-item" onclick="window.location.href='/game.html?id=${g.id}'" style="cursor: pointer;">
+    <a href="/game.html?id=${g.id}" class="game-strip-item" style="text-decoration: none; color: inherit;">
         <div class="game-strip-icon" style="...">
             ${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
                 ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover;">` 
@@ -104,9 +104,8 @@ strip.innerHTML = sorted.map(g => `
             }
         </div>
         <div class="game-strip-name">${g.name}</div>
-    </div>
+    </a>
 `).join('');
-
     // Обработчик клика (он у тебя уже написан правильно, оставляем как есть)
     strip.addEventListener('click', (e) => {
         const item = e.target.closest('[data-game]');
@@ -240,26 +239,23 @@ function initSearch() {
     const input = document.getElementById('searchInput');
     const suggestionsBox = document.getElementById('searchSuggestions');
 
-    if (!input) return;
+    if (!input || !suggestionsBox) return;
 
     input.addEventListener('input', debounce((e) => {
-        const query = e.target.value.trim();
+        const query = e.target.value.toLowerCase().trim();
         
-        // 1. Твоя старая логика: фильтруем товары
+        // 1. Фильтруем товары на странице
         currentFilter.query = query;
         pagination.currentPage = 1;
         applyFilter();
 
-        // 2. Новая логика: показываем подсказки игр
-        if (!suggestionsBox) return;
-
+        // 2. Показываем подсказки
         if (query.length < 1) {
             suggestionsBox.classList.remove('active');
             return;
         }
 
-        // Ищем игры в загруженном списке allGames
-        const matches = allGames.filter(g => g.name.toLowerCase().includes(query.toLowerCase())).slice(0, 5);
+        const matches = allGames.filter(g => g.name.toLowerCase().includes(query)).slice(0, 5);
 
         if (matches.length > 0) {
             suggestionsBox.innerHTML = matches.map(g => `
@@ -269,7 +265,10 @@ function initSearch() {
                             ? `<img src="${g.icon}">` 
                             : `<i class="${g.icon || 'fas fa-gamepad'}" style="color:#00e5ff;"></i>`}
                     </div>
-                    <div class="suggestion-name">${g.name}</div>
+                    <div class="suggestion-info">
+                        <div class="suggestion-name">${g.name}</div>
+                        <div class="suggestion-cats">Аккаунты, UC, Бусты, Услуги</div>
+                    </div>
                 </div>
             `).join('');
             suggestionsBox.classList.add('active');
@@ -278,9 +277,8 @@ function initSearch() {
         }
     }, 300));
 
-    // Скрываем подсказки при клике в любое другое место
     document.addEventListener('click', (e) => {
-        if (suggestionsBox && !input.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        if (!input.contains(e.target) && !suggestionsBox.contains(e.target)) {
             suggestionsBox.classList.remove('active');
         }
     });

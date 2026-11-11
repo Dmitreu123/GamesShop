@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/src/css/style.css">
     <link rel="stylesheet" href="/src/css/responsive.css">
+    <style>
+        .game-header { background: linear-gradient(135deg, #1e1e1e, #121212); padding: 30px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; display: flex; align-items: center; gap: 20px; }
+        .game-header-icon { width: 80px; height: 80px; border-radius: 16px; overflow: hidden; border: 2px solid #00e5ff; box-shadow: 0 0 20px rgba(0,229,255,0.2); }
+        .game-header-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .game-title { color: #fff; font-size: 28px; margin: 0; }
+    </style>
 </head>
 <body>
-
-    <!-- Шапка -->
     <header class="container header-inner">
         <a href="/" class="logo"><i class="fas fa-gamepad"></i> <span>Games Shop</span></a>
         <nav class="nav-actions">
@@ -19,27 +23,21 @@
     </header>
 
     <main class="container" style="padding-top: 20px; padding-bottom: 100px;">
-        <!-- Динамический заголовок игры -->
-        <div id="gameHeader" class="gs-hero-banner" style="margin-bottom: 20px;">
-            <div class="gs-hero-content">
-                <h1 class="gs-hero-title" id="gameTitle">Загрузка...</h1>
-                <p class="gs-hero-subtitle" id="gameDesc">Покупайте и продавайте товары для этой игры.</p>
+        <!-- Заголовок игры -->
+        <div id="gameHeader" class="game-header">
+            <div class="game-header-icon" id="gameIcon"></div>
+            <div>
+                <h1 class="game-title" id="gameTitle">Загрузка...</h1>
+                <p style="color: #888; margin-top: 5px;">Покупайте и продавайте товары для этой игры.</p>
             </div>
         </div>
 
-        <!-- Категории -->
-        <div id="gameCategories" class="gs-categories-bar" style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px;">
-            <!-- Сюда JS вставит кнопки категорий -->
-        </div>
+        <!-- Вкладки категорий -->
+        <div id="gameCategories" style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 25px; padding-bottom: 10px;"></div>
 
         <!-- Сетка товаров -->
-        <div id="gameProductsGrid" class="product-grid">
-            <div style="text-align: center; color: #888; width: 100%; padding: 50px;">
-                <i class="fas fa-spinner fa-spin" style="font-size: 32px;"></i>
-            </div>
-        </div>
+        <div id="gameProductsGrid" class="product-grid"></div>
     </main>
-
     <script type="module" src="/src/js/game.js"></script>
 </body>
 </html>
