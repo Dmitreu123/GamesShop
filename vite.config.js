@@ -38,7 +38,8 @@ input: {
   agreement: path.resolve(__dirname, 'agreement.html'),
   terms: path.resolve(__dirname, 'terms.html'),
   contacts: path.resolve(__dirname, 'contacts.html'),
-  edit: path.resolve(__dirname, 'edit.html') // <-- ВОТ ОНА!
+edit: path.resolve(__dirname, 'edit.html'),
+game: path.resolve(__dirname, 'game.html') // <-- ДОБАВЬ ВОТ ЭТУ СТРОЧКУ
 }
     }
   }
