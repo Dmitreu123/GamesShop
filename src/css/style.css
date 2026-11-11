@@ -5906,3 +5906,129 @@ body {
     border-color: #00e5ff !important;
     color: #00e5ff !important;
 }
+
+/* =========================================
+   РЕДИЗАЙН ПОДВАЛА (GAMES SHOP STYLE)
+   ========================================= */
+.gs-footer {
+    background: #0a0a0f; /* Глубокий темный фон */
+    border-top: 1px solid #1f1f2a;
+    padding: 40px 20px 100px 20px; /* Отступ снизу, чтобы не перекрывало меню */
+    margin-top: 40px;
+}
+.gs-footer-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Верхний блок (Ссылки + Поддержка) */
+.gs-footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.gs-footer-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 30px;
+}
+.gs-footer-links a {
+    color: #888;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+.gs-footer-links a:hover {
+    color: #00e5ff;
+}
+.gs-support-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #00e5ff;
+    border: 1px solid #00e5ff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.gs-support-btn:hover {
+    background: rgba(0, 229, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+}
+
+/* Средний блок (Оплата и Соцсети) */
+.gs-footer-middle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 25px 0;
+    border-top: 1px solid #1f1f2a;
+    border-bottom: 1px solid #1f1f2a;
+    margin-bottom: 20px;
+}
+.gs-footer-payments {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.gs-pay-label {
+    color: #666;
+    font-size: 13px;
+}
+.gs-pay-icons {
+    display: flex;
+    gap: 10px;
+}
+.gs-pay-icon {
+    width: 50px;
+    height: 32px;
+    background: #151520;
+    border: 1px solid #2a2a35;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 20px;
+}
+
+/* Соцсети */
+.gs-footer-socials {
+    display: flex;
+    gap: 10px;
+}
+.gs-social-link {
+    width: 40px;
+    height: 40px;
+    background: #151520;
+    border: 1px solid #2a2a35;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 18px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+.gs-social-link:hover {
+    color: #fff;
+    border-color: #b300ff; /* Фиолетовый неон */
+    box-shadow: 0 0 10px rgba(179, 0, 255, 0.3);
+}
+
+/* Нижний блок */
+.gs-footer-bottom {
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+}
