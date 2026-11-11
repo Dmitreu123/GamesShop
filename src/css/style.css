@@ -5787,3 +5787,122 @@ body.chat-page-body {
     display: flex; flex-direction: column;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+
+/* =========================================
+   РЕДИЗАЙН ГЛАВНОЙ (CYBERPUNK STYLE)
+   ========================================= */
+
+/* Общий фон */
+body {
+    background: #0a0a0f !important; /* Глубокий темный */
+}
+
+/* Баннер */
+.gs-hero-banner {
+    position: relative;
+    background: #12121a;
+    border: 1px solid #2a2a35;
+    border-radius: 20px;
+    padding: 40px 30px;
+    margin: 20px 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.gs-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 60%;
+}
+.gs-hero-tag {
+    display: inline-block;
+    background: rgba(0, 229, 255, 0.1);
+    color: #00e5ff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+}
+.gs-hero-title {
+    font-size: 32px;
+    color: #fff;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 10px 0;
+}
+.gs-hero-subtitle {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+.gs-hero-btn {
+    background: #00e5ff;
+    color: #000;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+.gs-hero-btn:hover {
+    background: #00c4db;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+}
+.gs-hero-bg {
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(179, 0, 255, 0.2) 0%, transparent 70%);
+    z-index: 1;
+}
+
+/* Поисковая строка */
+.search-bar {
+    background: #151520 !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 12px !important;
+    transition: 0.3s;
+}
+.search-bar:focus-within {
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+/* Карточки товаров */
+.product-card {
+    background: #12121a !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 16px !important;
+    transition: 0.3s !important;
+}
+.product-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: #00e5ff !important;
+    box-shadow: 0 10px 20px rgba(0, 229, 255, 0.1) !important;
+}
+
+/* Кнопки категорий */
+.category-card, .sell-tab {
+    background: #151520 !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 12px !important;
+    color: #888 !important;
+    transition: 0.2s;
+}
+.category-card:hover, .sell-tab:hover {
+    border-color: #b300ff !important;
+    color: #fff !important;
+}
+.category-card.active, .sell-tab.active {
+    background: rgba(0, 229, 255, 0.1) !important;
+    border-color: #00e5ff !important;
+    color: #00e5ff !important;
+}
