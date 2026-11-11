@@ -342,41 +342,32 @@ function initProfileMenu() {
     const menuOverlay = document.getElementById('profileMenu');
     const menuClose = document.getElementById('profileMenuClose');
 
-    // Если кнопка и меню есть на странице — вешаем клик
-    if (menuBtn && menuOverlay) {
+    if (menuBtn && menuOverlay && menuClose) {
+        // Открытие меню
         menuBtn.onclick = () => {
-            menuOverlay.style.display = 'flex'; // Открываем
+            menuOverlay.classList.add('open');
             document.body.style.overflow = 'hidden';
             
-            // Подгружаем данные (почта, аватар)
             const me = getUser() || profileUser;
             if (me) {
-                const emailEl = document.getElementById('menuEmail');
-                if (emailEl) emailEl.textContent = me.email || '—';
-                
+                document.getElementById('menuEmail').textContent = me.email || '—';
                 const avatarEl = document.getElementById('menuAvatar');
-                if (avatarEl) {
-                    if (me.avatar) {
-                        avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
-                    } else {
-                        avatarEl.innerHTML = me.username ? me.username[0].toUpperCase() : '?';
-                    }
+                if (me.avatar) {
+                    avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
+                } else {
+                    avatarEl.innerHTML = me.username ? me.username[0].toUpperCase() : '?';
                 }
             }
         };
-    } else {
-        console.error("Кнопка меню или само меню не найдены в HTML!");
-    }
-
-    // Закрытие меню
-    if (menuClose) {
+        
+        // Закрытие меню
         menuClose.onclick = () => {
-            menuOverlay.style.display = 'none'; // Закрываем
+            menuOverlay.classList.remove('open');
             document.body.style.overflow = '';
         };
     }
 
-    // Логика смены аватарки (оставь ту, что была)
+    // Смена аватарки
     const avatarBtn = document.getElementById('menuChangeAvatar');
     const avatarInput = document.getElementById('menuAvatarInput');
     if (avatarBtn && avatarInput) {
@@ -401,7 +392,7 @@ function initProfileMenu() {
         };
     }
 
-    // Выход
+    // Выход из профиля
     document.getElementById('menuLogout')?.addEventListener('click', () => {
         if (confirm('Выйти из профиля?')) {
             clearAuth();
@@ -409,7 +400,6 @@ function initProfileMenu() {
         }
     });
 }
-
 
 
 document.addEventListener('DOMContentLoaded', () => {

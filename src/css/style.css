@@ -5767,3 +5767,23 @@ body.chat-page-body {
 .profile-menu-overlay.open {
     display: flex;
 }
+
+/* =========================================
+   МОДАЛЬНОЕ ОКНО НАСТРОЕК (В ЦЕНТРЕ)
+   ========================================= */
+.profile-menu-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+    z-index: 99999;
+    display: none; /* Скрыто по умолчанию */
+    align-items: center; justify-content: center;
+}
+.profile-menu-overlay.open {
+    display: flex; /* Показываем при клике */
+}
+.profile-menu-panel {
+    width: 90%; max-width: 400px; max-height: 85vh;
+    background: #1e1e1e; border: 1px solid #333; border-radius: 16px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}

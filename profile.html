@@ -49,46 +49,55 @@
 <body>
 
 <!-- МЕНЮ (ПО ЦЕНТРУ ЭКРАНА) -->
-<div class="profile-menu-overlay" id="profileMenu" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-    
-<div class="profile-menu-panel" style="width: 90%; max-width: 340px; max-height: 85vh; background: #1e1e1e; border: 1px solid #333; border-radius: 16px; padding: 20px; box-sizing: border-box; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow-y: auto;">        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+<!-- МЕНЮ (МОДАЛЬНОЕ ОКНО) -->
+<div class="profile-menu-overlay" id="profileMenu">
+    <div class="profile-menu-panel">
+        
+        <!-- Шапка меню (не скроллится) -->
+        <div style="padding: 20px; border-bottom: 1px solid #2a2a2a; display: flex; justify-content: space-between; align-items: center;">
             <h2 style="margin: 0; font-size: 20px; color: #fff;">Настройки</h2>
-<button id="profileMenuClose" onclick="document.getElementById('profileMenu').style.display='none'" style="background: none; border: none; color: #888; font-size: 24px; cursor: pointer;"><i class="fas fa-times"></i></button>
+            <button id="profileMenuClose" style="background: none; border: none; color: #888; font-size: 24px; cursor: pointer;"><i class="fas fa-times"></i></button>
         </div>
 
-        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
-            <div id="menuAvatar" style="width: 70px; height: 70px; background: #2196f3; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; color: #fff; overflow: hidden; margin-bottom: 10px;">?</div>
-            <button id="menuChangeAvatar" style="background: none; border: none; color: #00e5ff; font-size: 13px; cursor: pointer;">Изменить фото</button>
-            <input type="file" id="menuAvatarInput" accept="image/*" style="display: none;">
+        <!-- Контент меню (скроллится) -->
+        <div style="padding: 20px; overflow-y: auto; flex: 1;">
+            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+                <div id="menuAvatar" style="width: 70px; height: 70px; background: #2196f3; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; color: #fff; overflow: hidden; margin-bottom: 10px;">?</div>
+                <button id="menuChangeAvatar" style="background: none; border: none; color: #00e5ff; font-size: 13px; cursor: pointer;">Изменить фото</button>
+                <input type="file" id="menuAvatarInput" accept="image/*" style="display: none;">
+            </div>
+
+            <div style="background: #121212; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="color: #888; font-size: 12px; margin-bottom: 4px;">Email</div>
+                <div id="menuEmail" style="color: #fff; font-size: 14px;">—</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span style="color: #fff; font-size: 14px;">Уведомления</span>
+                <label class="gs-switch">
+                    <input type="checkbox" id="menuNotificationsToggle" checked>
+                    <span class="gs-slider"></span>
+                </label>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <span style="color: #fff; font-size: 14px;">Защита средств</span>
+                <label class="gs-switch">
+                    <input type="checkbox" id="menuProtectionToggle">
+                    <span class="gs-slider"></span>
+                </label>
+            </div>
+
+            <a href="/support.html" style="display: block; color: #00e5ff; text-decoration: none; font-size: 14px; margin-bottom: 10px;"><i class="fas fa-headset"></i> Написать в поддержку</a>
         </div>
 
-        <div style="background: #121212; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-            <div style="color: #888; font-size: 12px; margin-bottom: 4px;">Email</div>
-            <div id="menuEmail" style="color: #fff; font-size: 14px;">—</div>
+        <!-- Подвал меню (кнопка выхода всегда внизу) -->
+        <div style="padding: 20px; border-top: 1px solid #2a2a2a; background: #181818; border-radius: 0 0 16px 16px;">
+            <button id="menuLogout" style="width: 100%; padding: 12px; background: rgba(244,67,54,0.1); color: #f44336; border: 1px solid #f44336; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                Выйти из профиля
+            </button>
         </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <span style="color: #fff; font-size: 14px;">Уведомления</span>
-            <label class="gs-switch">
-                <input type="checkbox" id="menuNotificationsToggle" checked>
-                <span class="gs-slider"></span>
-            </label>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <span style="color: #fff; font-size: 14px;">Защита средств</span>
-            <label class="gs-switch">
-                <input type="checkbox" id="menuProtectionToggle">
-                <span class="gs-slider"></span>
-            </label>
-        </div>
-
-        <a href="/support.html" style="display: block; color: #00e5ff; text-decoration: none; font-size: 14px; margin-bottom: 20px;"><i class="fas fa-headset"></i> Написать в поддержку</a>
-
-        <button id="menuLogout" style="width: 100%; padding: 12px; background: rgba(244,67,54,0.1); color: #f44336; border: 1px solid #f44336; border-radius: 8px; font-weight: bold; cursor: pointer;">
-            Выйти из профиля
-        </button>
+        
     </div>
 </div>
 
