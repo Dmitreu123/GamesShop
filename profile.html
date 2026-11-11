@@ -54,7 +54,7 @@
 <div class="profile-menu-panel" style="width: 90%; max-width: 340px; max-height: 85vh; background: #1e1e1e; border: 1px solid #333; border-radius: 16px; padding: 20px; box-sizing: border-box; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow-y: auto;">        
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0; font-size: 20px; color: #fff;">Настройки</h2>
-            <button id="profileMenuClose" style="background: none; border: none; color: #888; font-size: 24px; cursor: pointer;"><i class="fas fa-times"></i></button>
+<button id="profileMenuClose" onclick="document.getElementById('profileMenu').style.display='none'" style="background: none; border: none; color: #888; font-size: 24px; cursor: pointer;"><i class="fas fa-times"></i></button>
         </div>
 
         <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
@@ -94,7 +94,7 @@
 
 <!-- ШАПКА -->
 <header class="profile-topbar">
-    <button class="profile-menu-btn" id="profileMenuBtn">
+<button class="profile-menu-btn" id="profileMenuBtn" onclick="document.getElementById('profileMenu').style.display='flex'">
         <i class="fas fa-bars"></i>
     </button>
     <div class="profile-topbar-title">Профиль</div>
