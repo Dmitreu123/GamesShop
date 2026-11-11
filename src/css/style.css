@@ -6032,3 +6032,130 @@ body {
     color: #555;
     font-size: 12px;
 }
+
+/* =========================================
+   РЕДИЗАЙН КАРТОЧЕК ТОВАРОВ И КАТЕГОРИЙ
+   ========================================= */
+
+/* Сетка товаров */
+.product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    gap: 20px !important;
+    margin-top: 20px !important;
+}
+
+/* Сама карточка товара */
+.product-card {
+    background: #12121a !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    text-decoration: none !important;
+}
+.product-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: #00e5ff !important; /* Бирюзовый неон */
+    box-shadow: 0 10px 25px rgba(0, 229, 255, 0.15) !important;
+}
+
+/* Картинка внутри карточки */
+.product-image-main {
+    width: 100% !important;
+    aspect-ratio: 4 / 3 !important; /* Чуть вытянутые фото */
+    background: #0a0a0f !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+.product-image-main img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.3s ease !important;
+}
+.product-card:hover .product-image-main img {
+    transform: scale(1.05) !important; /* Легкий зум при наведении */
+}
+
+/* Название товара */
+.product-title {
+    color: #fff !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    padding: 12px 12px 5px 12px !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Цена и кнопка "Купить" */
+.product-price {
+    padding: 0 12px 12px 12px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-top: auto !important;
+}
+.product-price .price-value {
+    color: #00e5ff !important; /* Цена неоновым цветом */
+    font-size: 20px !important;
+    font-weight: 800 !important;
+}
+.product-price .buy-btn {
+    background: rgba(0, 229, 255, 0.1) !important;
+    color: #00e5ff !important;
+    border: 1px solid #00e5ff !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: 0.2s !important;
+}
+.product-price .buy-btn:hover {
+    background: #00e5ff !important;
+    color: #000 !important;
+}
+
+/* Бейджи (Премиум, скидка) */
+.product-badge {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    z-index: 10 !important;
+}
+.premium-badge {
+    background: linear-gradient(135deg, #b300ff, #ff007f) !important;
+    color: #fff !important;
+}
+
+/* Кнопки категорий (Все, Аккаунты и т.д.) */
+.category-card, .sell-tab, .filter-btn {
+    background: #151520 !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 12px !important;
+    color: #888 !important;
+    padding: 10px 18px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: 0.2s !important;
+}
+.category-card:hover, .sell-tab:hover, .filter-btn:hover {
+    border-color: #b300ff !important;
+    color: #fff !important;
+}
+.category-card.active, .sell-tab.active, .filter-btn.active {
+    background: rgba(0, 229, 255, 0.1) !important;
+    border-color: #00e5ff !important;
+    color: #00e5ff !important;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2) !important;
+}
