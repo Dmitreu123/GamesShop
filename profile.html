@@ -38,6 +38,14 @@
         }
     </style>
 </head>
+<script>
+    window.onerror = function(msg) {
+        const div = document.createElement('div');
+        div.style = "position:fixed; top:0; left:0; right:0; background:red; color:white; z-index:999999; padding:15px; font-size:14px; font-weight:bold; text-align:center;";
+        div.textContent = "ОШИБКА JS: " + msg;
+        document.body.appendChild(div);
+    };
+</script>
 <body>
 
 <!-- МЕНЮ (ПО ЦЕНТРУ ЭКРАНА) -->

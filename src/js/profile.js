@@ -342,52 +342,57 @@ function initProfileMenu() {
     const menuOverlay = document.getElementById('profileMenu');
     const menuClose = document.getElementById('profileMenuClose');
 
-if (menuBtn && menuOverlay && menuClose) {
-    menuBtn.onclick = () => {
-        menuOverlay.style.display = 'flex'; // Открываем
-        document.body.style.overflow = 'hidden';
-        
-        const me = getUser() || profileUser;
-        if (me) {
-            document.getElementById('menuEmail').textContent = me.email || '—';
-            const avatarEl = document.getElementById('menuAvatar');
-            if (me.avatar) {
-                avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
-            } else {
-                avatarEl.innerHTML = me.username ? me.username[0].toUpperCase() : '?';
+    // Если кнопка и меню есть на странице — вешаем клик
+    if (menuBtn && menuOverlay) {
+        menuBtn.onclick = () => {
+            menuOverlay.style.display = 'flex'; // Открываем
+            document.body.style.overflow = 'hidden';
+            
+            // Подгружаем данные (почта, аватар)
+            const me = getUser() || profileUser;
+            if (me) {
+                const emailEl = document.getElementById('menuEmail');
+                if (emailEl) emailEl.textContent = me.email || '—';
+                
+                const avatarEl = document.getElementById('menuAvatar');
+                if (avatarEl) {
+                    if (me.avatar) {
+                        avatarEl.innerHTML = `<img src="${me.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
+                    } else {
+                        avatarEl.innerHTML = me.username ? me.username[0].toUpperCase() : '?';
+                    }
+                }
             }
-        }
-    };
-    
-    menuClose.onclick = () => {
-        menuOverlay.style.display = 'none'; // Закрываем
-        document.body.style.overflow = '';
-    };
-}
+        };
+    } else {
+        console.error("Кнопка меню или само меню не найдены в HTML!");
+    }
 
+    // Закрытие меню
+    if (menuClose) {
+        menuClose.onclick = () => {
+            menuOverlay.style.display = 'none'; // Закрываем
+            document.body.style.overflow = '';
+        };
+    }
 
-    // ЛОГИКА СМЕНЫ АВАТАРКИ
+    // Логика смены аватарки (оставь ту, что была)
     const avatarBtn = document.getElementById('menuChangeAvatar');
     const avatarInput = document.getElementById('menuAvatarInput');
-    
     if (avatarBtn && avatarInput) {
         avatarBtn.onclick = () => avatarInput.click();
-        
         avatarInput.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
             const fd = new FormData();
             fd.append('avatar', file);
-
             try {
                 const res = await fetch('/api/users/me/avatar', {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${getToken()}` },
                     body: fd
                 });
-                if (!res.ok) throw new Error('Ошибка загрузки');
-                
+                if (!res.ok) throw new Error('Ошибка');
                 showToast('Аватар обновлен!', 'success');
                 setTimeout(() => location.reload(), 1000);
             } catch (err) {
@@ -396,6 +401,7 @@ if (menuBtn && menuOverlay && menuClose) {
         };
     }
 
+    // Выход
     document.getElementById('menuLogout')?.addEventListener('click', () => {
         if (confirm('Выйти из профиля?')) {
             clearAuth();
@@ -403,6 +409,8 @@ if (menuBtn && menuOverlay && menuClose) {
         }
     });
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadProfile();
