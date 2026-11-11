@@ -95,17 +95,17 @@ function renderGamesStrip(games) {
     const sorted = [...games].sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
 
     // ПРАВИЛЬНАЯ ГЕНЕРАЦИЯ HTML (добавлена обертка с data-game)
-    strip.innerHTML = sorted.map(g => `
-        <div class="game-strip-item" data-game="${g.id}" style="cursor: pointer;">
-            <div class="game-strip-icon" style="background: ${g.color ? g.color + '20' : 'rgba(255,255,255,0.05)'}; color: ${g.color || 'var(--primary)'}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                ${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
-                    ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover;">` 
-                    : `<i class="${g.icon || 'fas fa-gamepad'}" style="font-size: 24px;"></i>`
-                }
-            </div>
-            <div class="game-strip-name">${g.name}</div>
+strip.innerHTML = sorted.map(g => `
+    <div class="game-strip-item" onclick="window.location.href='/game.html?id=${g.id}'" style="cursor: pointer;">
+        <div class="game-strip-icon" style="...">
+            ${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
+                ? `<img src="${g.icon}" style="width: 100%; height: 100%; object-fit: cover;">` 
+                : `<i class="${g.icon || 'fas fa-gamepad'}" style="font-size: 24px;"></i>`
+            }
         </div>
-    `).join('');
+        <div class="game-strip-name">${g.name}</div>
+    </div>
+`).join('');
 
     // Обработчик клика (он у тебя уже написан правильно, оставляем как есть)
     strip.addEventListener('click', (e) => {
@@ -238,11 +238,52 @@ applyFilter();
 
 function initSearch() {
     const input = document.getElementById('searchInput');
+    const suggestionsBox = document.getElementById('searchSuggestions');
+
+    if (!input) return;
+
     input.addEventListener('input', debounce((e) => {
-        currentFilter.query = e.target.value.trim();
+        const query = e.target.value.trim();
+        
+        // 1. Твоя старая логика: фильтруем товары
+        currentFilter.query = query;
         pagination.currentPage = 1;
         applyFilter();
+
+        // 2. Новая логика: показываем подсказки игр
+        if (!suggestionsBox) return;
+
+        if (query.length < 1) {
+            suggestionsBox.classList.remove('active');
+            return;
+        }
+
+        // Ищем игры в загруженном списке allGames
+        const matches = allGames.filter(g => g.name.toLowerCase().includes(query.toLowerCase())).slice(0, 5);
+
+        if (matches.length > 0) {
+            suggestionsBox.innerHTML = matches.map(g => `
+                <div class="suggestion-item" onclick="window.location.href='/game.html?id=${g.id}'">
+                    <div class="suggestion-icon">
+                        ${g.icon && (g.icon.includes('http') || g.icon.startsWith('/')) 
+                            ? `<img src="${g.icon}">` 
+                            : `<i class="${g.icon || 'fas fa-gamepad'}" style="color:#00e5ff;"></i>`}
+                    </div>
+                    <div class="suggestion-name">${g.name}</div>
+                </div>
+            `).join('');
+            suggestionsBox.classList.add('active');
+        } else {
+            suggestionsBox.classList.remove('active');
+        }
     }, 300));
+
+    // Скрываем подсказки при клике в любое другое место
+    document.addEventListener('click', (e) => {
+        if (suggestionsBox && !input.contains(e.target) && !suggestionsBox.contains(e.target)) {
+            suggestionsBox.classList.remove('active');
+        }
+    });
 }
 
 function initProductClicks() {

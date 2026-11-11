@@ -14,10 +14,12 @@
 <header>
     <div class="container header-inner">
         <a href="/" class="logo"><i class="fas fa-gamepad"></i><span>Games Shop</span></a>
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Поиск игр, аккаунтов, валюты...">
-        </div>
+<div class="search-bar">
+    <i class="fas fa-search"></i>
+    <input type="text" id="gameSearch" placeholder="Поиск игр, аккаунтов, валюты..." autocomplete="off">
+</div>
+<!-- Вот этот блок для подсказок -->
+<div id="searchSuggestions" class="search-suggestions-dropdown"></div>
         <nav class="nav-actions">
             <span id="authSlot"></span>
             <button class="btn btn-outline" id="cartBtn">
