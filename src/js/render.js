@@ -8,18 +8,18 @@ export function createProductCard(product) {
     // Бейдж премиум
     const premiumBadge = product.is_premium ? '<div class="product-badge premium-badge">🚀 ТОП</div>' : '';
 
-    // Бейдж скидки (если есть oldPrice и он больше текущей)
+    // Бейдж скидки (если есть old_price и он больше текущей)
     let discountBadge = '';
-    if (product.oldPrice && product.oldPrice > product.price) {
-        const discount = Math.round((1 - product.price / product.oldPrice) * 100);
+    if (product.old_price && product.old_price > product.price) {
+        const discount = Math.round((1 - product.price / product.old_price) * 100);
         if (discount >= 5) {
             discountBadge = `<div class="product-badge discount-badge">-${discount}%</div>`;
         }
     }
 
     // Старая цена
-    const oldPriceHTML = product.oldPrice && product.oldPrice > product.price
-        ? `<span class="price-old">${formatPrice(product.oldPrice)}</span>`
+    const oldPriceHTML = product.old_price && product.old_price > product.price
+        ? `<span class="price-old">${formatPrice(product.old_price)}</span>`
         : '';
 
     // Звёзды рейтинга
@@ -36,28 +36,37 @@ export function createProductCard(product) {
 
     // Изображение
     const imageHTML = product.images && product.images.length > 0
-        ? `<div class="product-image-main">
-             <img src="${product.images[0].url}" alt="">
-           </div>`
-        : `<div class="product-icon"><i class="${product.icon || 'fas fa-box'}"></i></div>`;
+        ? `<div class="product-image-main"><img src="${product.images[0].url}" alt=""></div>`
+        : `<div class="product-image-main"><div style="height:100%; display:flex; align-items:center; justify-content:center; color:#333;"><i class="${product.icon || 'fas fa-box'}" style="font-size:40px;"></i></div></div>`;
+
+    // Создаем бейджи игры и категории
+    const gameName = product.game ? product.game.toUpperCase() : 'GAME';
+    const categoryName = product.category === 'accounts' ? 'Аккаунт' : 
+                        (product.category === 'uc' ? 'Валюта' : 
+                        (product.category === 'boosts' ? 'Буст' : 'Услуга'));
 
     card.innerHTML = `
+        <div class="product-badges-top">
+            <span class="badge-game">${gameName}</span>
+            <span class="badge-category">${categoryName}</span>
+        </div>
         ${premiumBadge}
         ${discountBadge}
         ${imageHTML}
         <div class="product-title">${escapeHTML(product.title)}</div>
-        <div class="product-desc">${escapeHTML(product.description || product.desc || '')}</div>
+        <div class="product-desc">${escapeHTML(product.description || '')}</div>
         ${starsHTML}
         <div class="product-price">
             <div>
                 <span class="price-value">${formatPrice(product.price)}</span>
                 ${oldPriceHTML}
             </div>
-            <button class="buy-btn" data-id="${product.id}" title="В корзину">
+            <button class="buy-btn" data-id="${product.id}">
                 <i class="fas fa-shopping-cart"></i>
             </button>
         </div>
     `;
+
     return card;
 }
 

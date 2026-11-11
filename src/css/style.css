@@ -6159,3 +6159,48 @@ body {
     color: #00e5ff !important;
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.2) !important;
 }
+
+/* Бейджи игры и категории на карточке */
+.product-badges-top {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+}
+.badge-game {
+    background: rgba(0, 0, 0, 0.75);
+    color: #00e5ff;
+    border: 1px solid #00e5ff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+}
+.badge-category {
+    background: rgba(179, 0, 255, 0.2);
+    color: #e0b0ff;
+    border: 1px solid #b300ff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.gs-segment {
+    background: #151520;
+    border: 1px solid #2a2a35;
+    color: #888;
+    padding: 10px 20px;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.gs-segment.active {
+    background: rgba(0, 229, 255, 0.1);
+    color: #00e5ff;
+    border-color: #00e5ff;
+}

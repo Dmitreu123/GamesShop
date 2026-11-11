@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра — Games Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body>
+
+    <!-- Шапка -->
+    <header class="container header-inner">
+        <a href="/" class="logo"><i class="fas fa-gamepad"></i> <span>Games Shop</span></a>
+        <nav class="nav-actions">
+            <a href="/" style="color: #fff; font-size: 22px; text-decoration: none;"><i class="fas fa-arrow-left"></i></a>
+        </nav>
+    </header>
+
+    <main class="container" style="padding-top: 20px; padding-bottom: 100px;">
+        <!-- Динамический заголовок игры -->
+        <div id="gameHeader" class="gs-hero-banner" style="margin-bottom: 20px;">
+            <div class="gs-hero-content">
+                <h1 class="gs-hero-title" id="gameTitle">Загрузка...</h1>
+                <p class="gs-hero-subtitle" id="gameDesc">Покупайте и продавайте товары для этой игры.</p>
+            </div>
+        </div>
+
+        <!-- Категории -->
+        <div id="gameCategories" class="gs-categories-bar" style="display: flex; gap: 10px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px;">
+            <!-- Сюда JS вставит кнопки категорий -->
+        </div>
+
+        <!-- Сетка товаров -->
+        <div id="gameProductsGrid" class="product-grid">
+            <div style="text-align: center; color: #888; width: 100%; padding: 50px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 32px;"></i>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="/src/js/game.js"></script>
+</body>
+</html>
