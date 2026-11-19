@@ -27,11 +27,19 @@ async function loadGameData() {
         const catContainer = document.getElementById('gameCategories');
         const categories = data.categories || [];
         
-        let html = `<button class="gs-segment active" onclick="filterCategory('all', this)">Все товары</button>`;
-        categories.forEach(cat => {
-            html += `<button class="gs-segment" onclick="filterCategory('${cat.id}', this)">${escapeHTML(cat.title)}</button>`;
-        });
-        catContainer.innerHTML = html;
+let html = `<button class="gs-segment active" onclick="filterCategory('all', this)">Все товары</button>`;
+categories.forEach(cat => {
+    // Превращаем название категории в правильный ключ для базы данных
+    let catKey = 'services';
+    const t = cat.title.toLowerCase();
+    if (t.includes('аккаунт')) catKey = 'accounts';
+    else if (t.includes('uc') || t.includes('валют') || t.includes('монет') || t.includes('item')) catKey = 'items';
+    else if (t.includes('буст')) catKey = 'boosts';
+    else if (t.includes('услуг') || t.includes('ключ')) catKey = 'services';
+
+    html += `<button class="gs-segment" onclick="filterCategory('${catKey}', this)">${escapeHTML(cat.title)}</button>`;
+});
+catContainer.innerHTML = html;
 
     } catch (err) {
         console.error(err);

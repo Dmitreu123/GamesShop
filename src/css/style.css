@@ -6310,3 +6310,26 @@ body {
     color: #888;
     font-size: 12px;
 }
+
+/* =========================================
+   ЖЕСТКИЙ ФИКС КАРТИНОК (ЧТОБЫ НЕ СКУКРУЖИВАЛО)
+   ========================================= */
+.product-image-main img,
+.game-strip-icon img,
+.suggestion-icon img,
+.gs-avatar-box img,
+.game-header-icon img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important; /* Заполняет контейнер с обрезкой */
+    display: block !important;
+}
+
+/* Убеждаемся, что контейнеры не выпускают картинку за свои пределы */
+.product-image-main,
+.game-strip-icon,
+.suggestion-icon,
+.gs-avatar-box,
+.game-header-icon {
+    overflow: hidden !important;
+}
