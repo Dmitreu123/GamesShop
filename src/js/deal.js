@@ -212,47 +212,53 @@ function renderDeal() {
 /* ---------- Кнопки действий ---------- */
 
 function renderActions() {
-// Если это админ или модератор — скрываем кнопки действий
-const myRole = localStorage.getItem('games_shop_role');
-if (myRole === 'admin' || myRole === 'moderator') {
-    return `<div style="text-align:center; color:#ff9800; font-weight:bold; padding:10px; background:rgba(255,152,0,0.1); border-radius:8px;">👑 Вы в режиме администратора</div>`;
-}
-    if (deal.status === 'completed') {
-        // Отзыв
-        if (deal.is_buyer && !review) {
+    // Если это админ или модератор
+    const myRole = localStorage.getItem('games_shop_role');
+    if (myRole === 'admin' || myRole === 'moderator') {
+        return `<div style="text-align:center; color:#ff9800; font-weight:bold; padding:15px; background:rgba(255,152,0,0.1); border-radius:8px;">👑 Вы в режиме администратора</div>`;
+    }
+
+    if (!deal) return '';
+
+    // СДЕЛКА В ПРОЦЕССЕ
+    if (deal.status === 'pending' || deal.status === 'waiting_confirmation') {
+        
+        // Покупатель
+        if (deal.is_buyer) {
             return `
-                <button class="deal-action-btn primary" id="leaveReviewBtn">
-                    <i class="fas fa-star"></i> Оставить отзыв
+                <button class="deal-action-btn" id="disputeBtn" style="background: transparent; border: 1px solid #ff2e63; color: #ff2e63; margin-bottom: 10px; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                    <i class="fas fa-exclamation-triangle"></i> Открыть спор
+                </button>
+                <button class="deal-action-btn primary" id="confirmBtn" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                    <i class="fas fa-check"></i> Подтвердить получение
                 </button>
             `;
         }
-        return '';
+        
+        // Продавец
+        if (deal.is_seller) {
+            if (deal.status === 'pending') {
+                return `
+                    <button class="deal-action-btn danger" id="cancelBtn" style="margin-bottom: 10px; width: 100%; padding: 12px; background: transparent; border: 1px solid #f44336; color: #f44336; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        <i class="fas fa-times"></i> Отменить сделку
+                    </button>
+                    <button class="deal-action-btn primary" id="sellerDoneBtn" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        <i class="fas fa-paper-plane"></i> Я выполнил
+                    </button>
+                `;
+            } else {
+                return `
+                    <div style="text-align:center; padding:15px; background:rgba(255,193,7,0.1); border:1px solid #ffc107; border-radius:8px; color:#ffc107; font-size:14px;">
+                        <i class="fas fa-hourglass-half"></i> Ожидайте подтверждения от покупателя
+                    </div>
+                `;
+            }
+        }
     }
 
-if (deal.status === 'pending') {
-    // Покупатель может подтвердить или отменить
-    if (deal.is_buyer) {
-        return `
-            <button class="deal-action-btn primary" id="confirmBtn">
-                <i class="fas fa-check"></i> Подтвердить получение
-            </button>
-            <button class="deal-action-btn danger" id="cancelBtn">
-                <i class="fas fa-times"></i> Отменить сделку
-            </button>
-            <button class="deal-action-btn" id="disputeBtn" style="border: 1px solid #ff2e63; color: #ff2e63; background: transparent; margin-top: 10px;">
-                <i class="fas fa-exclamation-triangle"></i> Открыть спор
-            </button>
-        `;
-    }
-        // Продавец — ждёт или отменяет
-        return `
-            <div class="deal-hint">
-                Ожидайте подтверждения от покупателя или отмените сделку
-            </div>
-            <button class="deal-action-btn danger" id="cancelBtn">
-                <i class="fas fa-times"></i> Отменить сделку
-            </button>
-        `;
+    // Если завершена
+    if (deal.status === 'completed') {
+        return `<div style="text-align:center; color:#4caf50; font-weight:bold; padding:15px; background:rgba(76,175,80,0.1); border-radius:8px;">✅ Сделка успешно завершена</div>`;
     }
 
     return '';

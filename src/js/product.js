@@ -380,7 +380,31 @@ function bindEvents() {
                 return;
             }
 
-            if (!confirm(`Купить "${product.title}" за ${formatPrice(product.price)}?\n\nДеньги будут в блокировке до подтверждения.`)) return;
+// Открываем красивую модалку
+const modal = document.getElementById('buyModal');
+const modalText = document.getElementById('buyModalText');
+const confirmBtn = document.getElementById('confirmBuyBtn');
+
+modalText.innerHTML = `Купить <b>"${product.title}"</b> за <b style="color:#00e5ff;">${formatPrice(product.price)}</b>?<br><br><small style="color:#ff9800;">Деньги будут заморожены до подтверждения получения.</small>`;
+modal.style.display = 'flex';
+
+confirmBtn.onclick = async () => {
+    modal.style.display = 'none';
+    buyBtn.disabled = true;
+    buyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+    
+    try {
+        const newDeal = await deals.create(product.id);
+        showToast('Сделка создана! Деньги в блокировке.', 'success');
+        
+        // Если deals.create возвращает ID, переходим в сделку. Если нет — в профиль.
+        setTimeout(() => location.href = '/dashboard.html', 1200);
+    } catch (err) {
+        showToast(err.message, 'error');
+        buyBtn.disabled = false;
+        buyBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Купить';
+    }
+};
 
             buyBtn.disabled = true;
             buyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Оформление...';
