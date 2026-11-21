@@ -6333,3 +6333,19 @@ body {
 .game-header-icon {
     overflow: hidden !important;
 }
+
+/* =========================================
+   ФИКС КАРТИНОК НА СТРАНИЦЕ ИГРЫ (ЧТОБЫ НЕ ОБРЕЗАЛО)
+   ========================================= */
+.product-image-main {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #0a0a0f !important; /* Темный фон для пустых мест */
+}
+
+.product-image-main img {
+    object-fit: contain !important; /* Картинка вписывается целиком, без обрезки */
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
