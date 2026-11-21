@@ -338,6 +338,35 @@ function openReviewModal() {
 }
 
 /* ---------- Обработчики ---------- */
+// Универсальная функция показа модалки
+function showDealModal(title, text, iconClass, onConfirm) {
+    const modal = document.getElementById('dealModal');
+    const titleEl = document.getElementById('dealModalTitle');
+    const textEl = document.getElementById('dealModalText');
+    const iconEl = document.getElementById('dealModalIcon');
+    const confirmBtn = document.getElementById('dealModalConfirmBtn');
+    const cancelBtn = document.getElementById('dealModalCancelBtn');
+
+    titleEl.textContent = title;
+    textEl.innerHTML = text;
+    iconEl.innerHTML = `<i class="fas ${iconClass}"></i>`;
+    
+    // Настраиваем кнопку "ОК"
+    confirmBtn.onclick = async () => {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        await onConfirm();
+        modal.style.display = 'none';
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = 'ОК';
+    };
+
+    cancelBtn.onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    modal.style.display = 'flex';
+}
 
 function bindEvents() {
     // Показать/скрыть данные
@@ -353,57 +382,88 @@ function bindEvents() {
         }
     });
 
-    // Подтвердить
-    document.getElementById('confirmBtn')?.addEventListener('click', async () => {
-        if (!confirm('Подтвердить получение товара?\n\nПосле этого продавец получит оплату.')) return;
-        try {
-            const token = getToken();
-            const res = await fetch(`/api/deals/${deal.id}/confirm`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error('Ошибка');
-            showToast('Сделка подтверждена!', 'success');
-            loadDeal();
-        } catch (err) {
-            showToast(err.message, 'error');
+document.getElementById('sellerDoneBtn')?.addEventListener('click', () => {
+    showDealModal(
+        'Подтвердить выполнение?', 
+        'Убедитесь, что вы передали товар. Покупатель получит уведомление.', 
+        'fa-paper-plane', 
+        async () => {
+            try {
+                const res = await fetch(`/api/deals/${deal.id}/seller-done`, { // Проверь этот роут на бэкенде!
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                if (!res.ok) throw new Error('Ошибка');
+                showToast('Статус обновлен!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
         }
-    });
+    );
+});
 
-    // Отменить
-    document.getElementById('cancelBtn')?.addEventListener('click', async () => {
-        if (!confirm('Отменить сделку?')) return;
-        try {
-            const token = getToken();
-            const res = await fetch(`/api/deals/${deal.id}/cancel`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error('Ошибка');
-            showToast('Сделка отменена', 'info');
-            loadDeal();
-        } catch (err) {
-            showToast(err.message, 'error');
+document.getElementById('confirmBtn')?.addEventListener('click', () => {
+    showDealModal(
+        'Подтвердить получение?', 
+        'После этого продавец получит оплату, а сделка будет завершена.', 
+        'fa-check-circle', 
+        async () => {
+            try {
+                const res = await fetch(`/api/deals/${deal.id}/confirm`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                if (!res.ok) throw new Error('Ошибка подтверждения');
+                showToast('Сделка завершена!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
         }
-    });
+    );
+});
 
-// --- ОТКРЫТИЕ СПОРА ---
-document.getElementById('disputeBtn')?.addEventListener('click', async () => {
-    if (!confirm('Вы уверены, что хотите открыть спор? Деньги будут заморожены до решения администратора.')) return;
-    
-    try {
-        const res = await fetch(`/api/deals/${deal.id}/dispute`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${getToken()}` }
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Ошибка');
-        
-        showToast('Спор открыт! Ожидайте решения админа.', 'success');
-        setTimeout(() => location.reload(), 1500);
-    } catch (err) {
-        showToast(err.message, 'error');
-    }
+document.getElementById('cancelBtn')?.addEventListener('click', () => {
+    showDealModal(
+        'Отменить сделку?', 
+        'Деньги вернутся покупателю, а товар снова станет активным.', 
+        'fa-times-circle', 
+        async () => {
+            try {
+                const res = await fetch(`/api/deals/${deal.id}/cancel`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                if (!res.ok) throw new Error('Ошибка отмены');
+                showToast('Сделка отменена', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+    );
+});
+
+document.getElementById('disputeBtn')?.addEventListener('click', () => {
+    showDealModal(
+        'Открыть спор?', 
+        'Деньги останутся замороженными до решения администратора.', 
+        'fa-exclamation-triangle', 
+        async () => {
+            try {
+                const res = await fetch(`/api/deals/${deal.id}/dispute`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                if (!res.ok) throw new Error('Ошибка');
+                showToast('Спор открыт!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+    );
 });
 
     // Отзыв

@@ -30,6 +30,25 @@
 
 <div class="toast-container" id="toastContainer"></div>
 
+<!-- УНИВЕРСАЛЬНАЯ МОДАЛКА ДЛЯ СДЕЛКИ -->
+<div id="dealModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+    <div style="background: #1e1e1e; border: 1px solid #333; width: 90%; max-width: 400px; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        
+        <!-- Иконка -->
+        <div id="dealModalIcon" style="width: 60px; height: 60px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; color: #00e5ff; font-size: 30px;">
+            <i class="fas fa-question"></i>
+        </div>
+        
+        <h3 id="dealModalTitle" style="color: #fff; margin: 0 0 10px 0; font-size: 20px;">Подтверждение</h3>
+        <p id="dealModalText" style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Вы уверены?</p>
+        
+        <div style="display: flex; gap: 10px;">
+            <button id="dealModalCancelBtn" style="flex: 1; padding: 12px; background: #333; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Отмена</button>
+            <button id="dealModalConfirmBtn" style="flex: 1; padding: 12px; background: #00e5ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">ОК</button>
+        </div>
+    </div>
+</div>
+
 <script type="module" src="/src/js/deal.js"></script>
 </body>
 </html>

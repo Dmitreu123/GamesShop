@@ -389,20 +389,29 @@ modalText.innerHTML = `Купить <b>"${product.title}"</b> за <b style="col
 modal.style.display = 'flex';
 
 confirmBtn.onclick = async () => {
-    modal.style.display = 'none';
-    buyBtn.disabled = true;
-    buyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+    // Показываем загрузку ВНУТРИ модалки, а не закрываем её
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Оплата...';
     
     try {
+        // Создаем сделку
         const newDeal = await deals.create(product.id);
-        showToast('Сделка создана! Деньги в блокировке.', 'success');
         
-        // Если deals.create возвращает ID, переходим в сделку. Если нет — в профиль.
-        setTimeout(() => location.href = '/dashboard.html', 1200);
+        // Меняем текст в модалке на успех
+        modalText.innerHTML = `<span style="color:#4caf50; font-size: 16px; font-weight:bold;"><i class="fas fa-check-circle"></i> Успешно!</span><br><br>Перенаправляем в сделку...`;
+        confirmBtn.style.display = 'none'; // Прячем кнопку Оплатить
+        
+        // Перекидываем на страницу сделки (или в профиль, если ID сделки нет)
+        setTimeout(() => {
+            modal.style.display = 'none';
+            // Если newDeal содержит ID, переходим туда: location.href = `/deal.html?id=${newDeal.id}`;
+            location.href = '/dashboard.html'; 
+        }, 1500);
+
     } catch (err) {
         showToast(err.message, 'error');
-        buyBtn.disabled = false;
-        buyBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Купить';
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = 'Оплатить';
     }
 };
 
