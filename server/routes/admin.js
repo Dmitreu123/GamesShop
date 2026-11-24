@@ -130,7 +130,6 @@ if (winner === 'buyer') {
     
     // 4. Возвращаем товар в продажу
     db.prepare("UPDATE products SET status = 'active' WHERE id = ?").run(deal.product_id);
-}
     } else if (winner === 'seller') {
       db.prepare('UPDATE users SET balance = balance + ? WHERE id = ?').run(deal.payout, deal.seller_id);
       db.prepare('UPDATE users SET balance = balance + ? WHERE email = ?').run(deal.commission, 'admin@games.shop');
