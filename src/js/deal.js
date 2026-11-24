@@ -13,14 +13,12 @@ let partner = null;
 let review = null;
 
 /* ---------- Получить deal_id из URL ---------- */
-
 function getDealId() {
     const params = new URLSearchParams(location.search);
     return Number(params.get('id'));
 }
 
 /* ---------- Загрузка ---------- */
-
 async function loadDeal() {
     if (!isLoggedIn()) {
         location.href = '/login.html';
@@ -53,7 +51,6 @@ async function loadDeal() {
 }
 
 /* ---------- Ошибка ---------- */
-
 function renderError(msg) {
     document.getElementById('dealMain').innerHTML = `
         <div class="container" style="padding:60px 20px;text-align:center;">
@@ -66,281 +63,7 @@ function renderError(msg) {
     `;
 }
 
-/* ---------- Рендер ---------- */
-
-function renderDeal() {
-    // Заголовок
-    const headerTitle = deal.status === 'completed'
-        ? 'Завершённая сделка'
-        : (deal.status === 'pending' ? 'Активная сделка' : 'Отменённая сделка');
-    document.getElementById('dealHeaderTitle').textContent = headerTitle;
-
-    // Иконка статуса
-    let statusIcon = '⏳';
-    let statusColor = '#fbbf24';
-    let statusTitle = 'Ожидает подтверждения';
-    let statusDesc = '';
-
-    if (deal.status === 'completed') {
-        statusIcon = '✅';
-        statusColor = '#10b981';
-        statusTitle = 'Завершено';
-        statusDesc = deal.is_buyer
-            ? 'Вы подтвердили получение товара'
-            : `Покупатель подтвердил получение. Оплата зачислена на ваш баланс`;
-    } else if (deal.status === 'pending') {
-        statusIcon = '⏳';
-        statusColor = '#fbbf24';
-        statusTitle = deal.is_buyer ? 'Ожидает вашего подтверждения' : 'Ожидает подтверждения покупателя';
-        statusDesc = deal.is_buyer
-            ? 'Проверьте товар и нажмите «Подтвердить получение»'
-            : 'Передайте товар покупателю через чат и нажмите «Я выполнил»';
-    } else if (deal.status === 'cancelled') {
-        statusIcon = '❌';
-        statusColor = '#ef4444';
-        statusTitle = 'Сделка отменена';
-        statusDesc = 'Средства возвращены покупателю';
-    }
-
-    const main = document.getElementById('dealMain');
-
-    // Фото товара
-    const productImage = product && product.images && product.images.length > 0
-        ? `<img src="${product.images[0].url}" alt="">`
-        : `<div class="deal-product-icon"><i class="${product?.icon || 'fas fa-box'}"></i></div>`;
-
-    // Партнёр
-    const partnerAvatar = partner?.avatar
-        ? `<img src="${partner.avatar}" alt="">`
-        : escapeHTML((partner?.username || '?')[0].toUpperCase());
-
-    main.innerHTML = `
-        <div class="container deal-page">
-
-            <!-- Статус -->
-            <div class="deal-status-block" style="border-color: ${statusColor}30; background: ${statusColor}10;">
-                <div class="deal-status-icon">${statusIcon}</div>
-                <div class="deal-status-title" style="color: ${statusColor};">${statusTitle}</div>
-                ${statusDesc ? `<div class="deal-status-desc">${escapeHTML(statusDesc)}</div>` : ''}
-            </div>
-
-            <!-- Прогресс-бар -->
-            <div class="deal-progress">
-                <div class="deal-step ${deal.status === 'pending' ? 'active' : 'done'}">
-                    <div class="deal-step-dot">1</div>
-                    <div class="deal-step-label">Оплата</div>
-                </div>
-                <div class="deal-step-line"></div>
-                <div class="deal-step ${deal.status === 'completed' ? 'done' : (deal.is_seller ? 'active' : '')}">
-                    <div class="deal-step-dot">2</div>
-                    <div class="deal-step-label">Выполнение</div>
-                </div>
-                <div class="deal-step-line"></div>
-                <div class="deal-step ${deal.status === 'completed' ? 'done' : ''}">
-                    <div class="deal-step-dot">3</div>
-                    <div class="deal-step-label">Подтверждение</div>
-                </div>
-            </div>
-
-            <!-- Партнёр + чат -->
-            <div class="deal-partner-row">
-                <a href="/profile.html?u=${escapeHTML(partner?.username || '')}" class="deal-partner">
-                    <div class="deal-partner-avatar">${partnerAvatar}</div>
-                    <div class="deal-partner-info">
-                        <div class="deal-partner-role">${deal.is_buyer ? 'Продавец' : 'Покупатель'}</div>
-                        <div class="deal-partner-name">${escapeHTML(partner?.username || '—')}</div>
-                    </div>
-                </a>
-                <a href="/chat.html?deal=${deal.id}" class="deal-chat-btn">
-                    <i class="fas fa-comments"></i> Чат
-                </a>
-            </div>
-
-            <!-- Товар -->
-            <div class="deal-product-card">
-                <div class="deal-product-image">${productImage}</div>
-                <div class="deal-product-info">
-                    <div class="deal-product-title">${escapeHTML(product?.title || 'Товар удалён')}</div>
-                    <div class="deal-product-price">${formatPrice(deal.amount)}</div>
-                    <div class="deal-product-status">
-                        <i class="fas fa-circle" style="color: ${statusColor}; font-size: 8px;"></i>
-                        ${deal.status === 'completed' ? 'Завершено' : (deal.status === 'pending' ? 'В процессе' : 'Отменено')}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Кнопки действий -->
-            ${renderActions()}
-            <!-- Данные товара (только покупателю) -->
-            ${deal.is_buyer && product && product.login ? `
-                <div class="deal-section">
-                    <div class="deal-section-header">
-                        <h3 class="deal-section-title">
-                            <i class="fas fa-lock" style="color:#f59e0b;"></i> Данные товара
-                        </h3>
-                        <button class="deal-data-toggle" id="dataToggle">Показать</button>
-                    </div>
-                    <div class="deal-data-block" id="dataBlock" style="display:none;">
-                        <div class="deal-data-row"><span>Логин:</span> <b>${escapeHTML(product.login)}</b></div>
-                        <div class="deal-data-row"><span>Пароль:</span> <b>${escapeHTML(product.password || '—')}</b></div>
-                        ${product.account_id ? `<div class="deal-data-row"><span>ID аккаунта:</span> <b>${escapeHTML(product.account_id)}</b></div>` : ''}
-                        ${product.comment ? `<div class="deal-data-row"><span>Комментарий:</span> <b>${escapeHTML(product.comment)}</b></div>` : ''}
-                    </div>
-                </div>
-            ` : ''}
-
-            <!-- Отзыв (если оставлен) -->
-            ${review ? `
-                <div class="deal-section">
-                    <h3 class="deal-section-title">Ваш отзыв</h3>
-                    <div class="deal-review">
-                        <div class="deal-review-stars">
-                            ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
-                        </div>
-                        ${review.text ? `<div class="deal-review-text">${escapeHTML(review.text)}</div>` : ''}
-                    </div>
-                </div>
-            ` : ''}
-
-        </div>
-    `;
-
-    bindEvents();
-}
-
-/* ---------- Кнопки действий ---------- */
-function renderActions() {
-    // Если это админ или модератор
-    const myRole = localStorage.getItem('games_shop_role');
-    if (myRole === 'admin' || myRole === 'moderator') {
-        return `<div style="text-align:center; color:#ff9800; font-weight:bold; padding:15px; background:rgba(255,152,0,0.1); border-radius:8px;">👑 Вы в режиме администратора</div>`;
-    }
-
-    if (!deal) return '';
-
-    // СДЕЛКА В ПРОЦЕССЕ (Ожидает выполнения/подтверждения)
-    if (deal.status === 'pending' || deal.status === 'waiting_confirmation') {
-        
-        // Если ты ПОКУПАТЕЛЬ
-        if (deal.is_buyer) {
-            return `
-                <button class="deal-action-btn" id="disputeBtn" style="background: transparent; border: 1px solid #ff2e63; color: #ff2e63; margin-bottom: 10px; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                    <i class="fas fa-exclamation-triangle"></i> Открыть спор
-                </button>
-                <button class="deal-action-btn primary" id="confirmBtn" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                    <i class="fas fa-check"></i> Подтвердить получение
-                </button>
-            `;
-        }
-        
-        // Если ты ПРОДАВЕЦ
-        if (deal.is_seller) {
-            if (deal.status === 'pending') {
-                return `
-                    <button class="deal-action-btn danger" id="cancelBtn" style="margin-bottom: 10px; width: 100%; padding: 12px; background: transparent; border: 1px solid #f44336; color: #f44336; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                        <i class="fas fa-times"></i> Отменить сделку
-                    </button>
-                    <button class="deal-action-btn primary" id="sellerDoneBtn" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                        <i class="fas fa-paper-plane"></i> Я выполнил
-                    </button>
-                `;
-            } else {
-                return `
-                    <div style="text-align:center; padding:15px; background:rgba(255,193,7,0.1); border:1px solid #ffc107; border-radius:8px; color:#ffc107; font-size:14px;">
-                        <i class="fas fa-hourglass-half"></i> Ожидайте подтверждения от покупателя
-                    </div>
-                `;
-            }
-        }
-    }
-
-    // Если сделка завершена (добавил кнопку возврата)
-    if (deal.status === 'completed') {
-        return `
-            <div style="text-align:center; color:#4caf50; font-weight:bold; padding:15px; background:rgba(76,175,80,0.1); border-radius:8px; margin-bottom:10px;">✅ Сделка успешно завершена</div>
-            <button class="deal-action-btn" id="disputeBtn" style="background: transparent; border: 1px solid #ff2e63; color: #ff2e63; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                <i class="fas fa-exclamation-triangle"></i> Открыть спор (возврат)
-            </button>
-        `;
-    }
-
-    return '';
-}
-/* ---------- Модалка отзыва ---------- */
-
-function openReviewModal() {
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay open';
-    modal.id = 'dealReviewModal';
-    modal.innerHTML = `
-        <div class="modal" style="max-width:420px;">
-            <button class="modal-close" id="dealReviewClose"><i class="fas fa-times"></i></button>
-            <h2 class="modal-title">Оставить отзыв</h2>
-            <div class="star-picker" id="starPicker" style="font-size:32px;margin-bottom:14px;display:flex;gap:6px;justify-content:center;">
-                <i class="fas fa-star" data-v="1"></i>
-                <i class="fas fa-star" data-v="2"></i>
-                <i class="fas fa-star" data-v="3"></i>
-                <i class="fas fa-star" data-v="4"></i>
-                <i class="fas fa-star" data-v="5"></i>
-            </div>
-            <textarea id="reviewText" rows="4" placeholder="Расскажите о сделке..." maxlength="500"
-                style="width:100%;padding:12px;background:#0e141d;border:1px solid var(--border);border-radius:12px;color:white;font-size:15px;resize:vertical;font-family:inherit;"></textarea>
-            <button class="btn btn-primary" id="submitDealReview" style="width:100%;justify-content:center;margin-top:14px;">
-                Отправить отзыв
-            </button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-
-    let rating = 5;
-    const updateStars = () => {
-        modal.querySelectorAll('#starPicker i').forEach(i => {
-            i.style.color = Number(i.dataset.v) <= rating ? '#fbbf24' : '#4a5568';
-        });
-    };
-    updateStars();
-
-    modal.querySelector('#starPicker').onclick = (e) => {
-        const s = e.target.closest('i');
-        if (!s) return;
-        rating = Number(s.dataset.v);
-        updateStars();
-    };
-
-    const close = () => {
-        modal.remove();
-        document.body.style.overflow = '';
-    };
-
-    modal.querySelector('#dealReviewClose').onclick = close;
-    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
-
-    modal.querySelector('#submitDealReview').onclick = async () => {
-        const text = modal.querySelector('#reviewText').value;
-        try {
-            const token = getToken();
-            const res = await fetch('/api/reviews', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ deal_id: deal.id, rating, text })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
-            showToast('Спасибо за отзыв!', 'success');
-            close();
-            loadDeal();
-        } catch (err) {
-            showToast(err.message, 'error');
-        }
-    };
-}
-
-/* ---------- Обработчики ---------- */
-// Универсальная функция показа модалки
+/* ---------- Универсальная функция показа модалки ---------- */
 function showDealModal(title, text, iconClass, onConfirm) {
     const modal = document.getElementById('dealModal');
     const titleEl = document.getElementById('dealModalTitle');
@@ -353,7 +76,6 @@ function showDealModal(title, text, iconClass, onConfirm) {
     textEl.innerHTML = text;
     iconEl.innerHTML = `<i class="fas ${iconClass}"></i>`;
     
-    // Настраиваем кнопку "ОК"
     confirmBtn.onclick = async () => {
         confirmBtn.disabled = true;
         confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -370,6 +92,183 @@ function showDealModal(title, text, iconClass, onConfirm) {
     modal.style.display = 'flex';
 }
 
+/* ---------- Рендер ---------- */
+function renderDeal() {
+    const headerTitle = deal.status === 'completed'
+        ? 'Завершённая сделка'
+        : (deal.status === 'pending' || deal.status === 'waiting_confirmation' ? 'Активная сделка' : 'Отменённая сделка');
+    document.getElementById('dealHeaderTitle').textContent = headerTitle;
+
+    let statusIcon = '⏳';
+    let statusColor = '#fbbf24';
+    let statusText = 'В процессе';
+    
+    if (deal.status === 'completed') {
+        statusIcon = '✅';
+        statusColor = '#4caf50';
+        statusText = 'Завершено';
+    } else if (deal.status === 'cancelled') {
+        statusIcon = '❌';
+        statusColor = '#f44336';
+        statusText = 'Отменено';
+    }
+
+    const productImage = product && product.image 
+        ? `<img src="${product.image}" alt="">` 
+        : `<div style="width:100%;height:100%;background:#1e1e1e;display:flex;align-items:center;justify-content:center;color:#555;"><i class="fas fa-box fa-2x"></i></div>`;
+
+    document.getElementById('dealMain').innerHTML = `
+        <div class="container" style="padding-bottom: 100px;">
+            
+            <!-- Статус бар -->
+            <div style="background: ${statusColor}20; border: 1px solid ${statusColor}; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 40px; margin-bottom: 10px;">${statusIcon}</div>
+                <h2 style="color: ${statusColor}; margin: 0 0 5px 0; font-size: 20px;">${statusText}</h2>
+                <p style="color: #aaa; margin: 0; font-size: 14px;">
+                    ${deal.status === 'completed' ? 'Покупатель подтвердил получение. Оплата зачислена на ваш баланс' : 'Проверьте товар и нажмите «Подтвердить получение»'}
+                </p>
+            </div>
+
+            <!-- Шаги -->
+            <div class="deal-steps" style="display:flex; justify-content:space-between; margin-bottom: 20px; padding: 0 10px;">
+                <div class="step ${deal.status !== 'cancelled' ? 'active' : ''}" style="text-align:center; color: #fff;">
+                    <div style="width:30px;height:30px;border-radius:50%;background:${deal.status !== 'cancelled' ? '#4caf50' : '#555'};margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-weight:bold;">1</div>
+                    <small>Оплата</small>
+                </div>
+                <div class="step ${deal.status === 'waiting_confirmation' || deal.status === 'completed' ? 'active' : ''}" style="text-align:center; color: #fff;">
+                    <div style="width:30px;height:30px;border-radius:50%;background:${deal.status === 'waiting_confirmation' || deal.status === 'completed' ? '#4caf50' : '#555'};margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-weight:bold;">2</div>
+                    <small>Выполнение</small>
+                </div>
+                <div class="step ${deal.status === 'completed' ? 'active' : ''}" style="text-align:center; color: #fff;">
+                    <div style="width:30px;height:30px;border-radius:50%;background:${deal.status === 'completed' ? '#4caf50' : '#555'};margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-weight:bold;">3</div>
+                    <small>Подтверждение</small>
+                </div>
+            </div>
+
+            <!-- Партнер -->
+            <div class="deal-partner-card" style="display:flex; align-items:center; background:#1a1a1a; padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid #333;">
+                <div style="width:50px;height:50px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;margin-right:15px;">
+                    ${partner.avatar ? `<img src="${partner.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : (partner.username ? partner.username[0].toUpperCase() : '?')}
+                </div>
+                <div style="flex:1;">
+                    <div style="color:#888;font-size:12px;">${deal.is_buyer ? 'Продавец' : 'Покупатель'}</div>
+                    <div style="color:#fff;font-weight:bold;font-size:16px;">${escapeHTML(partner.username)}</div>
+                </div>
+                <a href="/chat.html?deal=${deal.id}" class="btn btn-primary" style="background:#7c3aed;color:#fff;text-decoration:none;padding:10px 20px;border-radius:10px;font-weight:bold;">
+                    <i class="fas fa-comments"></i> Чат
+                </a>
+            </div>
+
+            <!-- Товар -->
+            <div class="deal-product-card" style="display:flex; align-items:center; background:#1a1a1a; padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid #333;">
+                <div class="deal-product-image" style="width:80px;height:80px;border-radius:10px;overflow:hidden;margin-right:15px;flex-shrink:0;">
+                    ${productImage}
+                </div>
+                <div class="deal-product-info" style="flex:1;">
+                    <div class="deal-product-title" style="color:#fff;font-weight:bold;font-size:16px;margin-bottom:5px;">${escapeHTML(product.title)}</div>
+                    <div class="deal-product-price" style="color:#00e5ff;font-weight:bold;font-size:18px;">${formatPrice(deal.amount)}</div>
+                    <div class="deal-product-status" style="color:#888;font-size:12px;margin-top:5px;">
+                        <i class="fas fa-circle" style="color: ${statusColor};font-size:8px;"></i> ${statusText}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            ${renderActions()}
+
+            <!-- Данные товара -->
+            ${deal.is_buyer && product && product.login ? `
+                <div class="deal-section" style="margin-top:20px;">
+                    <div class="deal-section-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <h3 class="deal-section-title" style="color:#fff;margin:0;font-size:16px;"><i class="fas fa-lock" style="color:#ff9800;"></i> Данные товара</h3>
+                        <button class="deal-data-toggle" id="dataToggle" style="background:none;border:none;color:#00e5ff;cursor:pointer;">Показать</button>
+                    </div>
+                    <div class="deal-data-block" id="dataBlock" style="display:none; background:#121212; padding:15px; border-radius:10px; border:1px solid #333;">
+                        <div class="deal-data-row" style="margin-bottom:10px;"><span style="color:#888;">Логин:</span> <span style="color:#fff;">${escapeHTML(product.login)}</span></div>
+                        <div class="deal-data-row" style="margin-bottom:10px;"><span style="color:#888;">Пароль:</span> <span style="color:#fff;">${escapeHTML(product.password)}</span></div>
+                        ${product.account_id ? `<div class="deal-data-row" style="margin-bottom:10px;"><span style="color:#888;">ID:</span> <span style="color:#fff;">${escapeHTML(product.account_id)}</span></div>` : ''}
+                        ${product.comment ? `<div class="deal-data-row"><span style="color:#888;">Комментарий:</span> <span style="color:#fff;">${escapeHTML(product.comment)}</span></div>` : ''}
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Отзыв -->
+            ${review ? `
+                <div class="deal-section" style="margin-top:20px;">
+                    <h3 class="deal-section-title" style="color:#fff;font-size:16px;margin-bottom:10px;">Ваш отзыв</h3>
+                    <div class="deal-review" style="background:#1a1a1a;padding:15px;border-radius:10px;border:1px solid #333;">
+                        <div class="deal-review-stars" style="color:#ffc107;font-size:18px;margin-bottom:5px;">
+                            ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                        </div>
+                        ${review.text ? `<div class="deal-review-text" style="color:#ddd;font-size:14px;">${escapeHTML(review.text)}</div>` : ''}
+                    </div>
+                </div>
+            ` : ''}
+
+        </div>
+    `;
+
+    bindEvents();
+}
+
+/* ---------- Кнопки действий ---------- */
+function renderActions() {
+    const myRole = localStorage.getItem('games_shop_role');
+    if (myRole === 'admin' || myRole === 'moderator') {
+        return `<div style="text-align:center; color:#ff9800; font-weight:bold; padding:15px; background:rgba(255,152,0,0.1); border-radius:8px; margin-bottom:15px;">👑 Вы в режиме администратора</div>`;
+    }
+
+    if (!deal) return '';
+
+    if (deal.status === 'pending' || deal.status === 'waiting_confirmation') {
+        if (deal.is_buyer) {
+            return `
+                <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:15px;">
+                    <button class="deal-action-btn" id="disputeBtn" style="background: transparent; border: 1px solid #ff2e63; color: #ff2e63; width: 100%; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        <i class="fas fa-exclamation-triangle"></i> Открыть спор
+                    </button>
+                    <button class="deal-action-btn primary" id="confirmBtn" style="width: 100%; padding: 14px; background: #00e5ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:16px;">
+                        <i class="fas fa-check"></i> Подтвердить получение
+                    </button>
+                </div>
+            `;
+        }
+        
+        if (deal.is_seller) {
+            if (deal.status === 'pending') {
+                return `
+                    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:15px;">
+                        <button class="deal-action-btn danger" id="cancelBtn" style="width: 100%; padding: 14px; background: transparent; border: 1px solid #f44336; color: #f44336; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                            <i class="fas fa-times"></i> Отменить сделку
+                        </button>
+                        <button class="deal-action-btn primary" id="sellerDoneBtn" style="width: 100%; padding: 14px; background: #00e5ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:16px;">
+                            <i class="fas fa-paper-plane"></i> Я выполнил
+                        </button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div style="text-align:center; padding:15px; background:rgba(255,193,7,0.1); border:1px solid #ffc107; border-radius:8px; color:#ffc107; font-size:14px; margin-bottom:15px;">
+                        <i class="fas fa-hourglass-half"></i> Ожидайте подтверждения от покупателя
+                    </div>
+                `;
+            }
+        }
+    }
+
+    if (deal.status === 'completed') {
+        return `
+            <div style="text-align:center; color:#4caf50; font-weight:bold; padding:15px; background:rgba(76,175,80,0.1); border-radius:8px; margin-bottom:10px;">✅ Сделка успешно завершена</div>
+            <button class="deal-action-btn" id="disputeBtn" style="background: transparent; border: 1px solid #ff2e63; color: #ff2e63; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom:15px;">
+                <i class="fas fa-exclamation-triangle"></i> Открыть спор (возврат)
+            </button>
+        `;
+    }
+
+    return '';
+}
+
+/* ---------- Обработчики ---------- */
 function bindEvents() {
     // Показать/скрыть данные
     document.getElementById('dataToggle')?.addEventListener('click', () => {
@@ -384,96 +283,78 @@ function bindEvents() {
         }
     });
 
-document.getElementById('sellerDoneBtn')?.addEventListener('click', () => {
-    showDealModal(
-        'Подтвердить выполнение?', 
-        'Убедитесь, что вы передали товар. Покупатель получит уведомление.', 
-        'fa-paper-plane', 
-        async () => {
+    // Подтвердить
+    document.getElementById('confirmBtn')?.addEventListener('click', () => {
+        showDealModal('Подтвердить получение?', 'После этого продавец получит оплату, а сделка будет завершена.', 'fa-check-circle', async () => {
             try {
-                const res = await fetch(`/api/deals/${deal.id}/seller-done`, { // Проверь этот роут на бэкенде!
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                if (!res.ok) throw new Error('Ошибка');
-                showToast('Статус обновлен!', 'success');
-                setTimeout(() => location.reload(), 1000);
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-    );
-});
-
-document.getElementById('confirmBtn')?.addEventListener('click', () => {
-    showDealModal(
-        'Подтвердить получение?', 
-        'После этого продавец получит оплату, а сделка будет завершена.', 
-        'fa-check-circle', 
-        async () => {
-            try {
+                const token = getToken();
                 const res = await fetch(`/api/deals/${deal.id}/confirm`, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
-                if (!res.ok) throw new Error('Ошибка подтверждения');
-                showToast('Сделка завершена!', 'success');
-                setTimeout(() => location.reload(), 1000);
+                if (!res.ok) throw new Error('Ошибка');
+                showToast('Сделка подтверждена!', 'success');
+                loadDeal();
             } catch (err) {
                 showToast(err.message, 'error');
             }
-        }
-    );
-});
+        });
+    });
 
-document.getElementById('cancelBtn')?.addEventListener('click', () => {
-    showDealModal(
-        'Отменить сделку?', 
-        'Деньги вернутся покупателю, а товар снова станет активным.', 
-        'fa-times-circle', 
-        async () => {
+    // Отменить
+    document.getElementById('cancelBtn')?.addEventListener('click', () => {
+        showDealModal('Отменить сделку?', 'Деньги вернутся покупателю, а товар снова станет активным.', 'fa-times-circle', async () => {
             try {
+                const token = getToken();
                 const res = await fetch(`/api/deals/${deal.id}/cancel`, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
-                if (!res.ok) throw new Error('Ошибка отмены');
-                showToast('Сделка отменена', 'success');
-                setTimeout(() => location.reload(), 1000);
+                if (!res.ok) throw new Error('Ошибка');
+                showToast('Сделка отменена', 'info');
+                loadDeal();
             } catch (err) {
                 showToast(err.message, 'error');
             }
-        }
-    );
-});
+        });
+    });
 
-document.getElementById('disputeBtn')?.addEventListener('click', () => {
-    showDealModal(
-        'Открыть спор?', 
-        'Деньги останутся замороженными до решения администратора.', 
-        'fa-exclamation-triangle', 
-        async () => {
+    // Открыть спор
+    document.getElementById('disputeBtn')?.addEventListener('click', () => {
+        showDealModal('Открыть спор?', 'Деньги останутся замороженными до решения администратора.', 'fa-exclamation-triangle', async () => {
             try {
+                const token = getToken();
                 const res = await fetch(`/api/deals/${deal.id}/dispute`, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 if (!res.ok) throw new Error('Ошибка');
                 showToast('Спор открыт!', 'success');
-                setTimeout(() => location.reload(), 1000);
+                loadDeal();
             } catch (err) {
                 showToast(err.message, 'error');
             }
-        }
-    );
-});
+        });
+    });
 
-    // Отзыв
-    document.getElementById('leaveReviewBtn')?.addEventListener('click', openReviewModal);
+    // Я выполнил (Продавец)
+    document.getElementById('sellerDoneBtn')?.addEventListener('click', () => {
+        showDealModal('Подтвердить выполнение?', 'Убедитесь, что вы передали товар. Покупатель получит уведомление.', 'fa-paper-plane', async () => {
+            try {
+                const token = getToken();
+                const res = await fetch(`/api/deals/${deal.id}/seller-done`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Ошибка');
+                showToast('Статус обновлен!', 'success');
+                loadDeal();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+    });
 }
 
-/* ---------- Старт ---------- */
-
+// Запуск
 document.addEventListener('DOMContentLoaded', loadDeal);
-
-
