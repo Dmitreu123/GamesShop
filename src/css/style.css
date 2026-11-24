@@ -6410,3 +6410,127 @@ body {
     box-shadow: 0 0 20px rgba(0, 229, 255, 0.4) !important;
     transform: translateY(-2px) !important;
 }
+
+/* =========================================
+   ФИКС КАРТИНКИ В СДЕЛКЕ
+   ========================================= */
+.deal-product-image {
+    width: 80px !important;
+    height: 80px !important;
+    flex-shrink: 0 !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    background: #0d1b1d !important;
+}
+
+.deal-product-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* =========================================
+   УЛУЧШЕННЫЙ ДИЗАЙН ФОРМЫ ПРОДАЖИ (CYBERPUNK)
+   ========================================= */
+.sell-label {
+    color: #888 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+}
+
+/* Поля ввода (Игра, Категория, Название, Описание) */
+.sell-input, select.sell-input, textarea.sell-input {
+    background: #12121a !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 12px !important;
+    color: #fff !important;
+    padding: 15px 18px !important;
+    font-size: 15px !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.sell-input:focus, select.sell-input:focus, textarea.sell-input:focus {
+    border-color: #00e5ff !important;
+    background: #1a1a24 !important;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.15) !important;
+}
+
+/* Карточки выбора (Полный/Частичный доступ) */
+.sell-radio {
+    background: #151520 !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: block !important;
+    margin-bottom: 12px !important;
+    position: relative !important;
+}
+
+.sell-radio:hover {
+    border-color: #b300ff !important;
+    background: #1a1a24 !important;
+}
+
+.sell-radio input[type="radio"] {
+    display: none !important; /* Прячем стандартный кружок */
+}
+
+/* Когда карточка выбрана */
+.sell-radio:has(input[type="radio"]:checked) {
+    border-color: #00e5ff !important;
+    background: rgba(0, 229, 255, 0.05) !important;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.1) !important;
+}
+
+.sell-radio-title {
+    color: #fff !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+/* Кастомный кружок выбора (неоновая точка) */
+.sell-radio-title::before {
+    content: '' !important;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    border: 2px solid #555 !important;
+    display: inline-block !important;
+    transition: 0.2s !important;
+    flex-shrink: 0 !important;
+}
+
+.sell-radio:has(input[type="radio"]:checked) .sell-radio-title::before {
+    border-color: #00e5ff !important;
+    background: #00e5ff !important;
+    box-shadow: inset 0 0 0 3px #121212 !important;
+}
+
+.sell-radio-desc {
+    color: #888 !important;
+    font-size: 13px !important;
+    margin-left: 28px !important;
+    line-height: 1.4 !important;
+}
+
+/* Красивая стрелочка у селектов (выпадающих списков) */
+select.sell-input {
+    appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px top 50% !important;
+    background-size: 12px auto !important;
+}
