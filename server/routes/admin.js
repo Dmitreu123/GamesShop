@@ -118,10 +118,19 @@ router.post('/disputes/:id/resolve', authRequired, adminOrModeratorRequired, (re
   if (deal.status !== 'disputed') return res.status(400).json({ error: 'Сделка не в статусе спора' });
 
   try {
-    if (winner === 'buyer') {
-      db.prepare('UPDATE users SET balance = balance + ? WHERE id = ?').run(deal.amount, deal.buyer_id);
-      db.prepare("UPDATE deals SET status = 'cancelled' WHERE id = ?").run(dealId);
-      db.prepare("UPDATE products SET status = 'active' WHERE id = ?").run(deal.product_id);
+if (winner === 'buyer') {
+    // 1. Возвращаем деньги покупателю
+    db.prepare('UPDATE users SET balance = balance + ? WHERE id = ?').run(deal.amount, deal.buyer_id);
+    
+    // 2. Списываем эти деньги с баланса Админа (если они туда попали как комиссия)
+    db.prepare('UPDATE users SET balance = balance - ? WHERE email = ?').run(deal.commission, 'admin@games.shop');
+    
+    // 3. Меняем статус сделки
+    db.prepare("UPDATE deals SET status = 'cancelled' WHERE id = ?").run(dealId);
+    
+    // 4. Возвращаем товар в продажу
+    db.prepare("UPDATE products SET status = 'active' WHERE id = ?").run(deal.product_id);
+}
     } else if (winner === 'seller') {
       db.prepare('UPDATE users SET balance = balance + ? WHERE id = ?').run(deal.payout, deal.seller_id);
       db.prepare('UPDATE users SET balance = balance + ? WHERE email = ?').run(deal.commission, 'admin@games.shop');

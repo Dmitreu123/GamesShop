@@ -6349,3 +6349,64 @@ body {
     max-width: 100% !important;
     max-height: 100% !important;
 }
+
+/* =========================================
+   КРАСИВЫЕ ФОРМЫ ПРОДАЖИ (CYBERPUNK STYLE)
+   ========================================= */
+.sell-input, .sell-step-title + select, textarea {
+    background: #121212 !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 12px !important;
+    color: #fff !important;
+    padding: 15px !important;
+    font-size: 15px !important;
+    transition: 0.3s !important;
+    outline: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+.sell-input:focus, select:focus, textarea:focus {
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.15) !important;
+    background: #1a1a24 !important;
+}
+.sell-label {
+    color: #888 !important;
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+/* Красивые карточки выбора (Премиум, Обычное и т.д.) */
+.sell-premium-card, .sell-radio {
+    background: #151520 !important;
+    border: 1px solid #2a2a35 !important;
+    border-radius: 16px !important;
+    transition: 0.3s !important;
+}
+.sell-premium-card:hover, .sell-radio:hover {
+    border-color: #b300ff !important;
+}
+.sell-premium-card input:checked + .sell-radio,
+.sell-premium-card.active, .sell-radio.active {
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.1) !important;
+}
+
+/* Кнопка Далее/Опубликовать */
+#sellNext, #sellPublish {
+    background: linear-gradient(135deg, #00e5ff, #b300ff) !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 15px 30px !important;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+}
+#sellNext:hover, #sellPublish:hover {
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4) !important;
+    transform: translateY(-2px) !important;
+}

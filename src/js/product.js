@@ -383,35 +383,30 @@ function bindEvents() {
 // Открываем красивую модалку
 const modal = document.getElementById('buyModal');
 const modalText = document.getElementById('buyModalText');
-const confirmBtn = document.getElementById('confirmBuyBtn');
+// Удаляем старые обработчики, если они были
+const newConfirmBtn = confirmBtn.cloneNode(true);
+confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
-modalText.innerHTML = `Купить <b>"${product.title}"</b> за <b style="color:#00e5ff;">${formatPrice(product.price)}</b>?<br><br><small style="color:#ff9800;">Деньги будут заморожены до подтверждения получения.</small>`;
-modal.style.display = 'flex';
-
-confirmBtn.onclick = async () => {
-    // Показываем загрузку ВНУТРИ модалки, а не закрываем её
-    confirmBtn.disabled = true;
-    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Оплата...';
+newConfirmBtn.onclick = async () => {
+    newConfirmBtn.disabled = true;
+    newConfirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
     
     try {
-        // Создаем сделку
         const newDeal = await deals.create(product.id);
         
-        // Меняем текст в модалке на успех
+        // Вместо закрытия показываем успех
         modalText.innerHTML = `<span style="color:#4caf50; font-size: 16px; font-weight:bold;"><i class="fas fa-check-circle"></i> Успешно!</span><br><br>Перенаправляем в сделку...`;
-        confirmBtn.style.display = 'none'; // Прячем кнопку Оплатить
+        newConfirmBtn.style.display = 'none';
         
-        // Перекидываем на страницу сделки (или в профиль, если ID сделки нет)
         setTimeout(() => {
             modal.style.display = 'none';
-            // Если newDeal содержит ID, переходим туда: location.href = `/deal.html?id=${newDeal.id}`;
             location.href = '/dashboard.html'; 
         }, 1500);
 
     } catch (err) {
         showToast(err.message, 'error');
-        confirmBtn.disabled = false;
-        confirmBtn.innerHTML = 'Оплатить';
+        newConfirmBtn.disabled = false;
+        newConfirmBtn.innerHTML = 'Оплатить';
     }
 };
 

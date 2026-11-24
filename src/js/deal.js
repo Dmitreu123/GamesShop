@@ -171,7 +171,15 @@ function renderDeal() {
 
             <!-- Кнопки действий -->
             ${renderActions()}
-
+// Если сделка завершена, но прошло мало времени (проверку времени можно добавить на бэкенде)
+if (deal.status === 'completed') {
+    return `
+        <div style="text-align:center; color:#4caf50; font-weight:bold; padding:15px; background:rgba(76,175,80,0.1); border-radius:8px; margin-bottom:10px;">✅ Сделка успешно завершена</div>
+        <button class="deal-action-btn" id="disputeBtn" style="background: transparent; border: 1px solid #ff2e63; color: #ff2e63; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            <i class="fas fa-exclamation-triangle"></i> Открыть спор (возврат)
+        </button>
+    `;
+}
             <!-- Данные товара (только покупателю) -->
             ${deal.is_buyer && product && product.login ? `
                 <div class="deal-section">
